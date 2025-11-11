@@ -1,0 +1,89 @@
+﻿using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
+
+public class UIMessageBox : MonoBehaviour
+{
+
+    public Text title;
+    public Text message;
+    public Image[] icons;
+    public Button buttonYes;
+    public Button buttonNo;
+    public Button buttonClose;
+
+    public Image achiIcon;
+
+    public Text buttonYesTitle;
+    public Text buttonNoTitle;
+
+    public UnityAction OnYes;
+    public UnityAction OnNo;
+
+
+    // Use this for initialization
+    void Start()
+    {
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        // 检测Enter键按下
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            // 如果有确认按钮，触发它的点击事件
+            if (buttonYes != null && buttonYes.gameObject.activeInHierarchy)
+            {
+                buttonYes.onClick.Invoke();
+            }
+        }
+        // 检测Esc键按下
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            // 如果有确认按钮，触发它的点击事件
+            if (buttonNo != null && buttonNo.gameObject.activeInHierarchy)
+            {
+                buttonNo.onClick.Invoke();
+            }
+        }
+    }
+
+    public void Init(string achieveName,string title, string message, MessageBoxType type = MessageBoxType.Information, string btnOK = "", string btnCancel = "")
+    {
+        if (!string.IsNullOrEmpty(title)) this.title.text = title;
+        this.message.text = message;
+        if (type == MessageBoxType.Confirm || type == MessageBoxType.Error)
+        {
+            this.icons[1].enabled = type == MessageBoxType.Confirm;
+            this.icons[2].enabled = type == MessageBoxType.Error;
+            if (!string.IsNullOrEmpty(btnOK)) this.buttonYesTitle.text = title;
+            if (!string.IsNullOrEmpty(btnCancel)) this.buttonNoTitle.text = title;
+            this.buttonYes.onClick.AddListener(OnClickYes);
+            this.buttonNo.onClick.AddListener(OnClickNo);
+
+            this.buttonNo.gameObject.SetActive(type == MessageBoxType.Confirm);
+            this.buttonYes.gameObject.SetActive(type == MessageBoxType.Confirm || type == MessageBoxType.Error);
+            return;
+        }
+        this.achiIcon = Resources.Load<Image>(achieveName);
+
+
+
+
+    }
+
+    void OnClickYes()
+    {
+        Destroy(this.gameObject);
+        if (this.OnYes != null)
+            this.OnYes();
+    }
+
+    void OnClickNo()
+    {
+        Destroy(this.gameObject);
+        if (this.OnNo != null)
+            this.OnNo();
+    }
+}

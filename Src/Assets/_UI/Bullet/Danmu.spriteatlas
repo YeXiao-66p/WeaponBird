@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Danmu
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 1024
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 0
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 1
+      enableTightPacking: 1
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 21300000, guid: 89ba921642003484abe02c7ef09ff515, type: 3}
+    - {fileID: 21300000, guid: 1e4ad4bbc16d54541abd1eea6083bc6a, type: 3}
+    - {fileID: 21300000, guid: 9cb75adf347f6d94e9252eeffc7f0b2e, type: 3}
+    - {fileID: 21300000, guid: 52e43fdcb5fc7e3478f132d28fc7ccca, type: 3}
+    - {fileID: 21300000, guid: 377c8ab12a9e40a4a9d83ab2a5f4bcf8, type: 3}
+    - {fileID: 21300000, guid: 586c62631d5712440a8bc78c8b9792f5, type: 3}
+    - {fileID: 21300000, guid: e78b42d43c4f1584fb6f2c9a64fe11b5, type: 3}
+    - {fileID: 21300000, guid: 98b90a825395b4645b5f25c51d59de2f, type: 3}
+    - {fileID: 21300000, guid: ce34894a265bdde45a2e176f9f6eb168, type: 3}
+    - {fileID: 21300000, guid: 3b416d5c87b48b44cb6527de91c90245, type: 3}
+    - {fileID: 21300000, guid: 2478e37e5c612ac48a4b7c34759d1fa1, type: 3}
+    - {fileID: 21300000, guid: 459f6496751cc9c4787e71da146515a1, type: 3}
+    - {fileID: 21300000, guid: 6ca0c9eb54517554ba82c52aa80733e1, type: 3}
+    - {fileID: 21300000, guid: 0dee1706d3e840c428cbde7487de9f98, type: 3}
+    - {fileID: 21300000, guid: 8b594172a8b4c5b47b932adf02d10681, type: 3}
+    - {fileID: 21300000, guid: 762a07df3f18dc5498a635b741caaee0, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - 377c8ab12a9e40a4a9d83ab2a5f4bcf8: 21300000
+    - 8b594172a8b4c5b47b932adf02d10681: 21300000
+    - 98b90a825395b4645b5f25c51d59de2f: 21300000
+    - 586c62631d5712440a8bc78c8b9792f5: 21300000
+    - e78b42d43c4f1584fb6f2c9a64fe11b5: 21300000
+    - 0dee1706d3e840c428cbde7487de9f98: 21300000
+    - 89ba921642003484abe02c7ef09ff515: 21300000
+    - 459f6496751cc9c4787e71da146515a1: 21300000
+    - ce34894a265bdde45a2e176f9f6eb168: 21300000
+    - 1e4ad4bbc16d54541abd1eea6083bc6a: 21300000
+    - 6ca0c9eb54517554ba82c52aa80733e1: 21300000
+    - 3b416d5c87b48b44cb6527de91c90245: 21300000
+    - 52e43fdcb5fc7e3478f132d28fc7ccca: 21300000
+    - 2478e37e5c612ac48a4b7c34759d1fa1: 21300000
+    - 762a07df3f18dc5498a635b741caaee0: 21300000
+    - 9cb75adf347f6d94e9252eeffc7f0b2e: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 377c8ab12a9e40a4a9d83ab2a5f4bcf8, type: 3}
+  - {fileID: 21300000, guid: 8b594172a8b4c5b47b932adf02d10681, type: 3}
+  - {fileID: 21300000, guid: 98b90a825395b4645b5f25c51d59de2f, type: 3}
+  - {fileID: 21300000, guid: 586c62631d5712440a8bc78c8b9792f5, type: 3}
+  - {fileID: 21300000, guid: e78b42d43c4f1584fb6f2c9a64fe11b5, type: 3}
+  - {fileID: 21300000, guid: 0dee1706d3e840c428cbde7487de9f98, type: 3}
+  - {fileID: 21300000, guid: 89ba921642003484abe02c7ef09ff515, type: 3}
+  - {fileID: 21300000, guid: 459f6496751cc9c4787e71da146515a1, type: 3}
+  - {fileID: 21300000, guid: ce34894a265bdde45a2e176f9f6eb168, type: 3}
+  - {fileID: 21300000, guid: 1e4ad4bbc16d54541abd1eea6083bc6a, type: 3}
+  - {fileID: 21300000, guid: 6ca0c9eb54517554ba82c52aa80733e1, type: 3}
+  - {fileID: 21300000, guid: 3b416d5c87b48b44cb6527de91c90245, type: 3}
+  - {fileID: 21300000, guid: 52e43fdcb5fc7e3478f132d28fc7ccca, type: 3}
+  - {fileID: 21300000, guid: 2478e37e5c612ac48a4b7c34759d1fa1, type: 3}
+  - {fileID: 21300000, guid: 762a07df3f18dc5498a635b741caaee0, type: 3}
+  - {fileID: 21300000, guid: 9cb75adf347f6d94e9252eeffc7f0b2e, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - BoomStar
+  - Boss_BlankCircleRed
+  - Boss_boomBlueS
+  - boomRed
+  - Boss_boomRedS
+  - Boss_BlankCircleBlue
+  - Player_Star
+  - Player_Bullet
+  - Boss_CardRed
+  - Pet_Star
+  - Boss_PinkBag
+  - Boss_CardBlue
+  - Boss_boomblue
+  - Boss_pinkBoom
+  - Boss_CircleRed
+  - Boss_CircleBlue
+  m_RenderDataMap: {}
+  m_Tag: Danmu
+  m_IsVariant: 0
