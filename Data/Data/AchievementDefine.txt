@@ -1,0 +1,32 @@
+{
+  "1": {
+    "ID": 1,
+    "Name": "收集金币",
+    "Description": "收集100枚金币",
+    "Category": "Collection",
+    "TextReward": "奖励100exp,10金币",
+    "TargetProgress": 100,
+    "CurrentProgress": 0,
+    "AchievementIcon": "UI/Coin"
+  },
+  "2": {
+    "ID": 2,
+    "Name": "杀死妖怪",
+    "Description": "杀死祸害村落的10只妖怪",
+    "Category": "Fight",
+    "TextReward": "奖励200exp,20金币",
+    "TargetProgress": 10,
+    "CurrentProgress": 0,
+    "AchievementIcon": "UI/apple red"
+  },
+  "3": {
+    "ID": 3,
+    "Name": "等级提升",
+    "Description": "等级提升至3级",
+    "Category": "All",
+    "TextReward": "奖励250exp,30金币",
+    "TargetProgress": 3,
+    "CurrentProgress": 0,
+    "AchievementIcon": "UI/Heart"
+  }
+}

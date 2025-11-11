@@ -1,0 +1,15 @@
+/Temp
+/obj
+/Src/.vsconfig
+/Src/Assembly-CSharp.csproj
+/Src/Assembly-CSharp-Editor.csproj
+/Src/FlappyBird3D.sln
+/Src/Src.sln
+/Src/Unity.AI.Navigation.Samples.csproj
+/Src/Unity.AI.Navigation.Samples.Initialization.Editor.csproj
+/Src/.vs
+/Src/Library
+/Src/Logs
+/Src/MemoryCaptures
+/Src/obj
+/Src/Packages
