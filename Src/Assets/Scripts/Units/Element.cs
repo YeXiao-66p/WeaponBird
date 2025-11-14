@@ -11,7 +11,6 @@ public class Element : MonoBehaviour
     public SIDE side;
     public Vector3 dir = new(1, 0, 0);
     public float power;
-    private Quaternion rotation;
     public GameObject target;
     internal bool isSkill = false;
     internal bool isSkillDiv = false;
@@ -28,15 +27,11 @@ public class Element : MonoBehaviour
     void Start()
     {
         this.transform.rotation = Quaternion.Euler(0, 0, -90);
-        //if (this.side != SIDE.PLAYER || this.side != SIDE.PET)
-        //{
-        //    this.target = Manager.Player;
-        //}
     }
     private void OnDisable()
     {
         this.isSkill = false;
-        //this.transform.rotation = Quaternion.Euler(0, 0, -90);
+        this.transform.rotation = Quaternion.Euler(0, 0, -90);
     }
     void Update()
     {
@@ -55,15 +50,7 @@ public class Element : MonoBehaviour
 
         if (this.side == SIDE.BOSS && this.isHardMode)
         {
-            //if (timer > 2f)
-            //{
-            //    if (target != null)
-            //    {
-            //        this.dir = (target.transform.position - this.transform.position).normalized;
-            //        this.speed += 5;
-            //        this.timer = 0;
-            //    }
-            //}
+            //×Óµ¯×·×Ù£¨¿ÉÀ©Õ¹£©
             this.transform.position += (Vector3)(dir * speed * Time.deltaTime);
         }
 
