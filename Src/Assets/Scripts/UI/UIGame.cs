@@ -27,10 +27,18 @@ public class UIGame : MonoSingleton<UIGame>
     public void StartGame(int levelId)
     {
         this.Status = GAME_STATUS.InGame;
-        player.Fly();
         this.player.inputMode = true;
         this.pet.isInput = true;
         this.player.isFly = true;
+        this.player.Init();
+
+        UIWorldElementManager.Instance.Score = 0;
+        Manager.UnitManager.enemyList.Clear();
+        if (Manager.Boss != null)
+        {
+            Destroy(Manager.Boss);
+            Manager.Boss = null;
+        }
         LoadLevel(levelId);
     }
 

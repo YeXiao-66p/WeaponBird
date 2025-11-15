@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using static Const;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using static UnityEditor.PlayerSettings;
 
 public class Boss : Enemy
 {
@@ -13,6 +11,7 @@ public class Boss : Enemy
     public GameObject danPre;
     public GameObject danmuBluePre;
     public GameObject danpreList;
+    public List<GameObject> danpreListGo;
     public GameObject danmuRedPre;
 
     public GameObject danmuPinkPreMove;
@@ -20,6 +19,8 @@ public class Boss : Enemy
     public GameObject danPreRedL2RMove;
     public GameObject danPreRedR2LMove;
     public GameObject danPreFireBox;
+    public GameObject danPrePinkFireBox;
+
 
 
 
@@ -40,6 +41,12 @@ public class Boss : Enemy
 
     Vector3 dir;
     private Camera Camera;
+
+    [Header("Full Screen LowSpeed Bullet")]
+    public float consistentBulletInterval = 0.35f;
+    public float consistentInterval = 1f;
+    public int maxRoundFullScreen = 300;
+    public float spedFullScreen = 3f;
 
     [Header("持续Single移动弹幕球")]
     [SerializeField] private int bulletPerRoundSingle = 36;
@@ -86,6 +93,7 @@ public class Boss : Enemy
 
     [Header("散射设置,中心向外多圈弹幕")]
     [SerializeField] private int bulletsPerShot = 36; // 每次发射的子弹数量
+    public float FireScatter360Interval = 0.2f;
     public bool aimOneAtPlayer = true; // 是否有一发子弹瞄准玩家
 
     [Header("波形发射设置")]
@@ -128,11 +136,21 @@ public class Boss : Enemy
     [SerializeField] private float fireScatter3BulletsPerShot = 96;
     [SerializeField] private int fireScatter3TotalRound = 8;
 
-    [Header("直接8个一组的大圆圈")]
-    [SerializeField] private float fireScatter4TimePerWave = 0.1f;
-    [SerializeField] private float fireScatter4TimePerRound = 2f;
-    [SerializeField] private float fireScatter4BulletsPerShot = 96;
+    [Header("直接8个一组的大圆圈舒适模式")]
+    [SerializeField] private float fireScatter4TimePerWave = 0.02f;
+    [SerializeField] private float fireScatter4TimePerRound = 1f;
+    [SerializeField] private float fireScatter4BulletsPerShot = 42;
     [SerializeField] private int fireScatter4TotalRound = 8;
+    private float Value = 100f;
+
+    [Header("FireRandomFiveToPlayer  Sub辅助射击")]
+    private float singleBulletInterval = 0.1f;
+    private float roundInterval = 1f;
+
+    [Header("FireScatter360Sub  Sub辅助射击")]
+    [SerializeField] private int bulletsPerShotSub = 64; // 每次发射的子弹数量
+    private float FireScatter360IntervalSub = 1f;
+
 
     [Header("死亡掉落/结算")]
     public GameObject dropPrefab;                   // Boss 死亡掉落
@@ -150,6 +168,9 @@ public class Boss : Enemy
 
     private Coroutine corNow;
     private Coroutine corNowSub;
+
+    public float quickInter = 0.4f;
+    public int pershot = 36;
     public override void OnStart()
     {
         this.Camera = Camera.main;
@@ -182,18 +203,12 @@ public class Boss : Enemy
             this.bulletPool2.Enqueue(go);
         }
     }
-    public float singleBulletInterval = 0.1f;
-    public float roundInterval = 1f;
-
-    public float consistentBulletInterval = 0.35f;
-    public float consistentInterval = 1f;
-
     IEnumerator Enter()
     {
-        //this.transform.position = new Vector3(30, 7, 0);
-        ////PlayFx(enterFxPrefab, this.transform.position);
-        //yield return MoveTo(new Vector3(14.5f, 7, 0));
-        //this.col.enabled = true;
+        this.transform.position = new Vector3(30, 7, 0);
+        //PlayFx(enterFxPrefab, this.transform.position);
+        yield return MoveTo(new Vector3(14.5f, 7, 0));
+        this.col.enabled = true;
         yield return new WaitForSeconds(6f);
         yield return Attack();
     }
@@ -206,436 +221,213 @@ public class Boss : Enemy
         while (true)
         {
             RandomColorBoom();
-            //if(this.currentPhaseIndex == 2)
-            //{
 
-            //}
-            corNow = StartCoroutine(WaveRoutine());
-            yield return new WaitForSeconds(4f);
-            if (corNow != null) StopCoroutine(corNow);
-            RandomColorBoom();
+            //continue;
 
-            StartCoroutine(State_FireAniMove());
-            yield return new WaitForSeconds(51.8f); ///59f: TotalTime 必须大于或等于各个协程的总时间
-            RandomColorBoom();
-
-            corNow = StartCoroutine(Fire520());
-            yield return new WaitForSeconds(15f);
-            if (corNow != null) StopCoroutine(corNow);
-
-            corNowSub = StartCoroutine(FireRandomFiveToPlayer(8, roundInterval));
-            yield return new WaitForSeconds((8 * singleBulletInterval + roundInterval) * 10f);
-            if (corNowSub != null) StopCoroutine(corNowSub);
-
-            //State_FullScreen();
-            //yield return new WaitForSeconds(211.2f);
+            if(this.currentPhaseIndex == 0)
+            {
+                RandomColorBoom();
+                yield return StartCoroutine(WaveRoutine());
+            }
 
             //2
-            StartCoroutine(State_FireScatter360());
-            yield return new WaitForSeconds(49.5f); // 上述协程里面的总需要的时间，小于改行Time会导致上述协程重复多次执行
-            RandomColorBoom();
+            if (this.currentPhaseIndex == 1)
+            {
+                RandomColorBoom();
+                yield return State_FireScatter360();
 
-            State_DouPotWave();
-            yield return new WaitForSeconds(16f);
+            }
 
-            RandomColorBoom();
-            //4
-            StartCoroutine(State_RandomCircle());
-            yield return new WaitForSeconds(44.1f);
+            if (this.currentPhaseIndex == 2)
+            {
+                RandomColorBoom();
+                yield return StartCoroutine(State_FullScreen());
+            }
 
-
-            //5
-            corNow = StartCoroutine(FireSpiralScatter(spinSpeed1, interval1, bulletsPerWave));
-            yield return new WaitForSeconds(15f);
-            if (corNow != null) StopCoroutine(corNow);
-
-            RandomColorBoom();
-            if (!this.player.CameraShake.isShaking)
-                StartCoroutine(this.player.CameraShake.Shake());
-
-            //6
-            corNow = StartCoroutine(FireAimedStream(0.04f, 6f));
-            yield return new WaitForSeconds(6f);
-            if (corNow != null) StopCoroutine(corNow);
+            if (this.currentPhaseIndex == 3)
+            {
+                //StartCoroutine(State_FireAniMove());
+                //yield return new WaitForSeconds(51.8f); ///59f: TotalTime 必须大于或等于各个协程的总时间
+                RandomColorBoom();
+                yield return StartCoroutine(State_FireAniMove());
+            }
 
 
+            if (this.currentPhaseIndex == 4)
+            {
+                //corNow = StartCoroutine(Fire520());
+                //yield return new WaitForSeconds(15f);
+                //if (corNow != null) StopCoroutine(corNow);
+                RandomColorBoom();
+                yield return StartCoroutine(Fire520());
+            }
 
-            if (!this.player.CameraShake.isShaking)
-                StartCoroutine(this.player.CameraShake.Shake());
 
-            RandomColorBoom();
-            //--------------------------------
-            //8
-            corNow = StartCoroutine(FireWaveBurst());
-            yield return new WaitForSeconds(10f);
-            if (corNow != null) StopCoroutine(corNow);
-            //--------------------------------
+            if (this.currentPhaseIndex == 5)
+            {
+                //corNow = StartCoroutine(State_DouPotWave());
+                //yield return new WaitForSeconds(16f);
+                //if (corNow != null) StopCoroutine(corNow);
 
-            //--------------------------------
-            StartCoroutine(State_RotateNWay());
-            yield return new WaitForSeconds(91f);
-            RandomColorBoom();
-            //--------------------------------
+                RandomColorBoom();
+                yield return StartCoroutine(State_DouPotWave());
+            }
 
-            State_Group5();
-            yield return new WaitForSeconds(5f);
-            this.SetRotaFire();
-            yield return new WaitForSeconds(second);
-            this.SetNormal();
-            yield return new WaitForSeconds(12f);
-            //--------------------------------
+            if (this.currentPhaseIndex == 6)
+            {
+                ////4
+                //StartCoroutine(State_RandomCircle());
+                //yield return new WaitForSeconds(44.1f);
+                RandomColorBoom();
+                yield return StartCoroutine(State_RandomCircle());
+            }
+
+            if (this.currentPhaseIndex == 7)
+            {
+                ////5
+                //corNow = StartCoroutine(FireSpiralScatter(spinSpeed1, interval1, bulletsPerWave));
+                //yield return new WaitForSeconds(15f);
+                //if (corNow != null) StopCoroutine(corNow);
+
+                RandomColorBoom();
+                yield return StartCoroutine(FireSpiralScatter(spinSpeed1, interval1, bulletsPerWave));
+            }
+
+
+            if (this.currentPhaseIndex == 8)
+            {
+                if (!this.player.CameraShake.isShaking)
+                    StartCoroutine(this.player.CameraShake.Shake());
+                yield return new WaitForSeconds(1f);
+                corNow = StartCoroutine(FireAimedStream(0.04f, 6f));
+                yield return new WaitForSeconds(1f);
+                corNowSub = StartCoroutine(FireScatter360Sub());
+                yield return new WaitForSeconds(30f);
+            }
+
+            if (this.currentPhaseIndex == 9)
+            {
+                //State_RotateSub();
+                //yield return new WaitForSeconds(151.1f);
+                RandomColorBoom();
+                yield return StartCoroutine(State_RotateSub());
+            }
+
+            if (this.currentPhaseIndex == 10)
+            {
+                //corNow = StartCoroutine(FireRotatingLianToPlayer(0.02f));
+                //yield return new WaitForSeconds(100f);
+                //if (corNow != null) StopCoroutine(corNow);
+                RandomColorBoom();
+                yield return StartCoroutine(FireRotatingLianToPlayer(0.02f));
+            }
+            if (this.currentPhaseIndex == 11)
+            {
+                if (!this.player.CameraShake.isShaking)
+                    StartCoroutine(this.player.CameraShake.Shake());
+                //corNow = StartCoroutine(FireWaveBurst());
+                //yield return new WaitForSeconds(10f);
+                //if (corNow != null) StopCoroutine(corNow);
+                RandomColorBoom();
+                yield return StartCoroutine(FireWaveBurst());
+            }
+
+            if (this.currentPhaseIndex == 12)
+            {
+                //StartCoroutine(State_RotateNWay());
+                //yield return new WaitForSeconds(91f);
+                //RandomColorBoom();
+                RandomColorBoom();
+                yield return StartCoroutine(State_RotateNWay());
+            }
+            if (this.currentPhaseIndex == 13)
+            {
+                yield return StartCoroutine(State_Group5());
+            }
             yield return null;
         }
     }
 
-    private void State_FullScreen()
+    IEnumerator State_RotateSub()
     {
-        StartCoroutine(FireAniFullScreen1L());
-        StartCoroutine(FireAniFullScreen2L());
-        StartCoroutine(FireAniFullScreen3L());
-        StartCoroutine(FireAniFullScreen4L());
-        StartCoroutine(FireAniFullScreen5L());
-        StartCoroutine(FireAniFullScreen6L());
-        StartCoroutine(FireAniFullScreen7L());
-
-        StartCoroutine(FireAniFullScreen1R());
-        StartCoroutine(FireAniFullScreen2R());
-        StartCoroutine(FireAniFullScreen3R());
-        StartCoroutine(FireAniFullScreen4R());
-        StartCoroutine(FireAniFullScreen5R());
-        StartCoroutine(FireAniFullScreen6R());
-        StartCoroutine(FireAniFullScreen7R());
-    }
-    public int maxRoundFullScreen = 300;
-    IEnumerator FireAniFullScreen1L()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(-1f, 7.4f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
+        yield return new WaitForSeconds(1f);
+        corNow = StartCoroutine(FireRotatingLianAni(stepDealy));
+        yield return new WaitForSeconds(1f);
+        corNowSub = StartCoroutine(FireScatter360Sub());
+        yield return new WaitForSeconds(100f);
     }
 
-    IEnumerator FireAniFullScreen2L()
+    IEnumerator FireRotatingLianAni(float stepDelay)
     {
+        yield return new WaitForSeconds(1f);
+        GameObject Box = Instantiate(danPrePinkFireBox, this.transform.position + new Vector3(-5f, 3f, 0), Quaternion.identity, this.danpreList.transform);
+        danpreListGo.Add(Box);
+        Box.GetComponent<Animator>().SetTrigger("Rotate");
         while (true)
         {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(-1f, 9.2f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
+            for (int j = 0; j < 150; j++)
             {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen3L()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(-1f, 11f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen4L()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(-1f, 12.7f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen5L()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(-1f, 5.6f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen6L()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(-1f, 3.8f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen7L()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(-1f, 2f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen1R()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(20.5f, 7.4f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = - 1 * go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
+                for (int i = 0; i < 13; i++)
+                {
+                    // 计算当前子弹的角度，从0度开始，均匀分布
+                    float currentAngle = i * 30;
+                    Vector3 shootDirection = Quaternion.Euler(0, 0, currentAngle) * Box.transform.right;
+                    GameObject ob;
+                    Element bu;
+                    GameUtil.BulletPoolGet(out ob, out bu, this.pool);
 
-    IEnumerator FireAniFullScreen2R()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(20.5f, 9.2f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = -1 * go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen3R()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(20.5f, 11f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = -1 * go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen4R()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(20.5f, 12.7f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = -1 * go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen5R()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(20.5f, 5.6f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = -1 * go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen6R()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(20.5f, 3.8f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = -1 * go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireAniFullScreen7R()
-    {
-        while (true)
-        {
-            GameObject go = Instantiate(danPreFireBox, new Vector3(20.5f, 2f), Quaternion.identity, this.danpreList.transform);
-            go.GetComponent<Animator>().SetTrigger("Box");
-            for (int i = 0; i < maxRoundFullScreen; i++)
-            {
-                GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = go.transform.position;
-                bu.side = SIDE.BOSS;
-                bu.dir = -1 * go.transform.right;
-                bu.speed = 5f;
-                yield return new WaitForSeconds(consistentBulletInterval);
-            }
-            Destroy(go);
-        }
-    }
-    IEnumerator FireRandomFiveToPlayer(int bulletsPerRing, float ringInterval)
-    {
-        //Debug.Log("随机圆形弹幕发射");
+                    ob.transform.position = Box.transform.position;
+                    bu.side = SIDE.BOSS; // 明确标记为Boss子弹，启用Element的dir移动
+                    bu.dir = shootDirection;
+                    bu.speed = 6f;
+                    ob.transform.rotation = Quaternion.Euler(0, 0, currentAngle);
 
+                }
+                yield return new WaitForSeconds(stepDelay);
+            }
+            yield return new WaitForSeconds(stepDelay);
+        }
+    }
+    IEnumerator FireRotatingLianToPlayer(float stepDelay)
+    {
         while (true)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
-            // 随机偏移Boss位置
-            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
-            Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
-            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
-            Vector3 dirSingle = (this.playerTarget.transform.position - this.transform.position).normalized;
-            for (int i = 0; i < bulletsPerRing; i++)
+            for (int j = 0; j < 50; j++)
             {
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = spawnPos;
-                bu.side = SIDE.BOSS;
-                bu.dir = dirSingle;
-                bu.speed = 8f;
-                yield return new WaitForSeconds(singleBulletInterval);
+                for (int i = 0; i < 13; i++)
+                {
+                    // 计算当前子弹的角度，从0度开始，均匀分布
+                    float currentAngle = i * 30 + AngleUtil.DirectionToAngle(this.dir);
+                    Vector3 shootDirection = Quaternion.Euler(0, 0, currentAngle) * Vector3.right;
+                    GameObject ob;
+                    Element bu;
+                    GameUtil.BulletPoolGet(out ob, out bu, this.pool);
+
+                    ob.transform.position = this.transform.position;
+                    bu.side = SIDE.BOSS; // 明确标记为Boss子弹，启用Element的dir移动
+                    bu.dir = shootDirection;
+                    bu.speed = 6f;
+                    ob.transform.rotation = Quaternion.Euler(0, 0, currentAngle);
+
+                }
+                yield return new WaitForSeconds(stepDelay);
             }
-            yield return new WaitForSeconds(ringInterval);
-
+            yield return new WaitForSeconds(stepDelay);
         }
-
-
     }
+    //IEnumerator State_ConsistenFire()
+    //{
 
+    //    yield return new WaitForSeconds(100f);
+    //}
+
+    //--------------RandomCircle发射--------------------------------------
     IEnumerator State_RandomCircle()
     {
+        yield return new WaitForSeconds(1f);
         corNow = StartCoroutine(FireRandomCircleBursts(this.ringCount, this.spawnRadius, this.bulletsPerRing, this.ringInterval));
+        yield return new WaitForSeconds(1f);
+        corNowSub = StartCoroutine(FireRandomFiveToPlayer(8, roundInterval));
         yield return new WaitForSeconds(22f);
         if (corNow != null) StopCoroutine(corNow);
 
@@ -651,11 +443,127 @@ public class Boss : Enemy
 
         corNow = StartCoroutine(FireRandomCircleImmediaHighSped(this.ringCountQuick, this.spawnRadiusQuick, 60, this.ringIntervalQuick));
         yield return new WaitForSeconds(10.5f);
+        if (corNowSub != null) StopCoroutine(corNowSub);
         if (corNow != null) StopCoroutine(corNow);
+    }    // 🎲 （1）随机在Boss附近生成一圈圆形弹幕（可扩展加快释放速度的协程）
+    IEnumerator FireRandomCircleBursts(int ringCount = 5, float spawnRadius = 3f, int bulletsPerRing = 24, float ringInterval = 1.2f)
+    {
+        //Debug.Log("随机圆形弹幕发射");
+
+        for (int ring = 0; ring < ringCount; ring++)
+        {
+            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            // 随机偏移Boss位置
+            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
+            Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
+
+            List<Element> ringBullets = new List<Element>();
+            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
+            // 先生成但不移动
+            float angleStep = 360f / bulletsPerRing;
+            for (int i = 0; i < bulletsPerRing; i++)
+            {
+                float angle = i * angleStep;
+                Vector3 dir = Quaternion.Euler(0, 0, angle) * Vector3.right;
+
+                GameObject ob;
+                Element bu;
+                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
+                ob.transform.position = spawnPos;
+                bu.side = SIDE.BOSS;
+                bu.dir = dir;
+                bu.speed = 0f;
+                ob.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+                ringBullets.Add(bu);
+            }
+
+            // 整圈延迟启动
+            StartCoroutine(ActivateRing(ringBullets, 5f, 1.0f));
+
+            yield return new WaitForSeconds(ringInterval);
+        }
     }
+    IEnumerator FireRandomCircleImmedia(int ringCount, float spawnRadius, int bulletsPerRing, float ringInterval)
+    {
+        //Debug.Log("随机圆形弹幕发射");
+
+        for (int ring = 0; ring < ringCount; ring++)
+        {
+            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            // 随机偏移Boss位置
+            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
+            Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
+            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
+            RandomColorBoom();
+            // 先生成但不移动
+            float angleStep = 360f / bulletsPerRing;
+            for (int i = 0; i < bulletsPerRing; i++)
+            {
+                float angle = i * angleStep;
+                Vector3 dir = Quaternion.Euler(0, 0, angle) * Vector3.right;
+
+                GameObject ob;
+                Element bu;
+                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
+                ob.transform.position = spawnPos;
+                bu.side = SIDE.BOSS;
+                bu.dir = dir;
+                bu.speed = 5f;
+                ob.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+            }
+
+            yield return new WaitForSeconds(ringInterval);
+        }
+    }
+    IEnumerator FireRandomCircleImmediaHighSped(int ringCount, float spawnRadius, int bulletsPerRing, float ringInterval)
+    {
+        //Debug.Log("随机圆形弹幕发射");
+
+        for (int ring = 0; ring < ringCount; ring++)
+        {
+            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            // 随机偏移Boss位置
+            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
+            Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
+            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
+            RandomColorBoom();
+            // 先生成但不移动
+            float angleStep = 360f / bulletsPerRing;
+            for (int i = 0; i < bulletsPerRing; i++)
+            {
+                float angle = i * angleStep;
+                Vector3 dir = Quaternion.Euler(0, 0, angle) * Vector3.right;
+
+                GameObject ob;
+                Element bu;
+                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
+                ob.transform.position = spawnPos;
+                bu.side = SIDE.BOSS;
+                bu.dir = dir;
+                bu.speed = 10f;
+                ob.transform.rotation = Quaternion.Euler(0, 0, angle);
+
+            }
+
+            yield return new WaitForSeconds(ringInterval);
+        }
+    }
+    IEnumerator ActivateRing(List<Element> ring, float finalSpeed, float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        foreach (var bullet in ring)
+        {
+            if (bullet != null && bullet.gameObject.activeInHierarchy)
+                bullet.speed = finalSpeed;
+        }
+    }
+    //-------------------------------------------------------------------
 
     IEnumerator State_FireAniMove()
     {
+        yield return new WaitForSeconds(1.5f);
         corNow = StartCoroutine(FireCircleCurveSingle(bulletPerRoundSingle, intervalSingle));
         yield return new WaitForSeconds(8.7f);
         if (corNow != null) StopCoroutine(corNow);
@@ -674,6 +582,10 @@ public class Boss : Enemy
         corNow = StartCoroutine(FireCirStraight(fireCircleNewbulletsPerRing, fireCircleNewringInterval));
         yield return new WaitForSeconds(22f);
         if (corNow != null) StopCoroutine(corNow);
+
+        corNow = StartCoroutine(FireCircleCurveQuick(pershot, quickInter));
+        yield return new WaitForSeconds(20f);
+        if (corNow != null) StopCoroutine(corNow);
     }
 
     // ===================== 攻击模式（）中为难度等级1，2，3递增 =====================
@@ -684,6 +596,7 @@ public class Boss : Enemy
         while (true)
         {
             GameObject go = Instantiate(this.danmuPinkPreMove, this.transform.position, Quaternion.identity, this.danpreList.transform);
+            danpreListGo.Add(go);
             go.GetComponent<Animator>().SetTrigger("Once");
             Vector3 goPos =  go.transform.position;
             if (go != null)
@@ -761,13 +674,54 @@ public class Boss : Enemy
         
 
     }
+    IEnumerator FireCircleCurveQuick(int bulletsPerRing, float ringInterval)
+    {
+        Vector3 shootDirection = new Vector3(0, 0, 0);
+        GameObject go = Instantiate(this.danmuPinkPreMove, this.transform.position, Quaternion.identity, this.danpreList.transform);
+        danpreListGo.Add(go);
+        go.GetComponent<Animator>().SetTrigger("Quick");
+        Vector3 goPos = go.transform.position;
+        while (true)
+        {
+            if (go != null)
+            {
+                for (int ring = 0; ring < 3; ring++)
+                {
+                    if (go != null)
+                    {
+                        GameObject danmu = Instantiate(danPre, goPos, Quaternion.identity, this.danpreList.transform);
+                    }
+
+                    for (int i = 0; i < bulletsPerRing; i++)
+                    {
+                        float angle = i * 360f / bulletsPerRing;
+                        GameObject ob;
+                        Element bu;
+                        GameUtil.BulletPoolGet(out ob, out bu, pool);
+                        if (go != null)
+                        {
+                            goPos = go.transform.position;
+                            ob.transform.position = go.transform.position;
+                            shootDirection = Quaternion.Euler(0, 0, angle) * go.transform.right;
+                        }
+                        bu.side = SIDE.BOSS; // 明确标记为Boss子弹，启用Element的dir移动
+                        bu.dir = shootDirection;
+                        bu.speed = 6;
+                        ob.transform.rotation = Quaternion.Euler(0, 0, angle);
+                    }
+                    yield return new WaitForSeconds(ringInterval);
+                }
+            }
+        }
+    }
     IEnumerator FireCircleCurveSingle(int bulletsPerRing, float ringInterval)
     {
         Vector3 shootDirection = new Vector3(0, 0, 0);
         while (true)
-        {
+            {
             GameObject go = Instantiate(this.danmuPinkPreMove, this.transform.position + new Vector3(-5, 0, 0), Quaternion.identity, this.danpreList.transform);
             Animator ani = go.GetComponent<Animator>();
+            danpreListGo.Add(go);
             if (ani != null)
             {
                 ani.SetTrigger("Single");
@@ -888,7 +842,7 @@ public class Boss : Enemy
     }
     //--------------利用动画Animation作为弹幕圈发射点， 可使用Animation扩展多个弹幕函数--------------------------------------
     //--------------（2）Fire520在屏幕绘画--------------------------------------
-    IEnumerator Fire520(int bulletsPerRing = 60, float ringInterval = 0.2f)
+    IEnumerator Fire520(int bulletsPerRing = 36, float ringInterval = 0.2f)
     {
         // 随机偏移Boss位置
         Vector2 offsetBoss = new Vector2(-8, 2);
@@ -986,7 +940,7 @@ public class Boss : Enemy
         // 整圈延迟启动
         StartCoroutine(ActivateRing(ringBullets, 5f, 0.5f));
 
-        yield return new WaitForSeconds(ringInterval);
+        yield return new WaitForSeconds(1f);
        
     }
     //--------------上述为Fire520在屏幕绘画--------------------------------------
@@ -1008,9 +962,9 @@ public class Boss : Enemy
     }
 
     //--------------（2）FireGroup5弹幕地狱！！，有旋转大球！！--------------------------------------
-    private void State_Group5()
+    IEnumerator State_Group5()
     {
-        StartCoroutine(FireGroup(48, ways, inter, 7));
+        corNow = StartCoroutine(FireGroup(48, ways, inter));
         if (this.danPre == this.danmuBluePre)
         {
             this.danPre2 = this.danmuRedPre;
@@ -1021,14 +975,15 @@ public class Boss : Enemy
             this.danPre2 = this.danmuBluePre;
             this.pool2 = this.bulletPool2;
         }
-        StartCoroutine(DelayedSpiral());
+        corNowSub = StartCoroutine(DelayedSpiral());
+        yield return new WaitForSeconds(10f);
     }
     IEnumerator DelayedSpiral()
     {
         yield return new WaitForSeconds(1f);
-        yield return StartCoroutine(FireGroup2(36, ways, inter - 0.02f, 18));
+        yield return StartCoroutine(FireGroup2(36, ways, inter - 0.02f));
     }
-    IEnumerator FireGroup(int waves, int ways, float stepDelay, float sped)
+    IEnumerator FireGroup(int waves, int ways, float stepDelay)
     {
         float baseAngle = 360 / ways;
         baseAngle %= 360;
@@ -1037,14 +992,14 @@ public class Boss : Enemy
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
             for (int i = 0; i < ways; i++)
             {
-                float currentAngle = i * baseAngle;
-                SpawnGroupOf5(currentAngle, this.pool, sped);
+                float currentAngle = i * baseAngle + AngleUtil.DirectionToAngle(this.dir);
+                SpawnGroupOf5(currentAngle, this.pool);
 
             }
             yield return new WaitForSeconds(stepDelay);
         }
     }
-    IEnumerator FireGroup2(int waves, int ways, float stepDelay, float sped)
+    IEnumerator FireGroup2(int waves, int ways, float stepDelay)
     {
         float baseAngle = 360 / ways;
         baseAngle %= 360;
@@ -1053,14 +1008,14 @@ public class Boss : Enemy
             GameObject go = Instantiate(this.danPre2, this.transform.position, Quaternion.identity, this.danpreList.transform);
             for (int i = 0; i < ways; i++)
             {
-                float currentAngle = i * baseAngle + 30;
-                SpawnGroupOf5(currentAngle, this.pool2, sped);
+                float currentAngle = i * baseAngle + 30 + AngleUtil.DirectionToAngle(this.dir);
+                SpawnGroupOf5(currentAngle, this.pool2);
 
             }
             yield return new WaitForSeconds(stepDelay);
         }
     }
-    public void SpawnGroupOf5(float angleDeg, Queue<GameObject> poolCur, float sped)
+    public void SpawnGroupOf5(float angleDeg, Queue<GameObject> poolCur)
     {
         Vector2[] offsets = new Vector2[5]
         {
@@ -1082,7 +1037,7 @@ public class Boss : Enemy
             ob.transform.position = this.transform.position + (Vector3)offsets[i];
             bu.side = SIDE.BOSS; // 明确标记为Boss子弹，启用Element的dir移动
             bu.dir = shootDirection;
-            bu.speed = sped;
+            bu.speed = Mathf.Lerp(8, 9.5f, Time.smoothDeltaTime * Value); ;
             ob.transform.rotation = Quaternion.Euler(0, 0, angleDeg);
 
         }
@@ -1091,7 +1046,7 @@ public class Boss : Enemy
 
 
     //-------------------------（3）DouPotWave两个弹幕圈生成点，弹幕地狱！！---------------------------
-    private void State_DouPotWave()
+   IEnumerator State_DouPotWave()
     {
         // 随机偏移Boss位置
         Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
@@ -1102,6 +1057,7 @@ public class Boss : Enemy
 
         ColorBoomChange();
         StartCoroutine(DelayedWaveBurst(spawnPos));
+        yield return new WaitForSeconds(10f);
     }
     IEnumerator DelayedWaveBurst(Vector3 pos)
     {
@@ -1193,7 +1149,7 @@ public class Boss : Enemy
     }
     //-------------------------上述为 DouPotWave两个弹幕圈生成点，弹幕地狱！！---------------------------
 
-    public IEnumerator WaveRoutine(int bulletsPerWave = 15, int waves = 8, float angleAmplitude = 20f, float angleFreq = 3, float intervalBetweenBullets = 0.05f)
+    IEnumerator WaveRoutine(int bulletsPerWave = 15, int waves = 8, float angleAmplitude = 20f, float angleFreq = 3, float intervalBetweenBullets = 0.05f)
     {
         for (int w = 0; w < waves; w++)
         {
@@ -1215,6 +1171,7 @@ public class Boss : Enemy
 
     IEnumerator State_RotateNWay()
     {
+        yield return new WaitForSeconds(1f);
         corNow = StartCoroutine(FireRotOldNWay(bulletcnt, intervalShu, angleNWay));
         yield return new WaitForSeconds(10f);
         if (corNow != null) StopCoroutine(corNow);
@@ -1455,122 +1412,6 @@ public class Boss : Enemy
         }
     }
 
-    // 🎲 （1）随机在Boss附近生成一圈圆形弹幕（可扩展加快释放速度的协程）
-    IEnumerator FireRandomCircleBursts(int ringCount = 5, float spawnRadius = 3f, int bulletsPerRing = 24, float ringInterval = 1.2f)
-    {
-        //Debug.Log("随机圆形弹幕发射");
-
-        for (int ring = 0; ring < ringCount; ring++)
-        {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
-            // 随机偏移Boss位置
-            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
-            Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
-
-            List<Element> ringBullets = new List<Element>();
-            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
-            // 先生成但不移动
-            float angleStep = 360f / bulletsPerRing;
-            for (int i = 0; i < bulletsPerRing; i++)
-            {
-                float angle = i * angleStep;
-                Vector3 dir = Quaternion.Euler(0, 0, angle) * Vector3.right;
-
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = spawnPos;
-                bu.side = SIDE.BOSS;
-                bu.dir = dir;
-                bu.speed = 0f;
-                ob.transform.rotation = Quaternion.Euler(0, 0, angle);
-
-                ringBullets.Add(bu);
-            }
-
-            // 整圈延迟启动
-            StartCoroutine(ActivateRing(ringBullets, 5f, 1.0f));
-
-            yield return new WaitForSeconds(ringInterval);
-        }
-    }
-    IEnumerator FireRandomCircleImmedia(int ringCount, float spawnRadius, int bulletsPerRing, float ringInterval)
-    {
-        //Debug.Log("随机圆形弹幕发射");
-
-        for (int ring = 0; ring < ringCount; ring++)
-        {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
-            // 随机偏移Boss位置
-            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
-            Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
-            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
-            RandomColorBoom();
-            // 先生成但不移动
-            float angleStep = 360f / bulletsPerRing;
-            for (int i = 0; i < bulletsPerRing; i++)
-            {
-                float angle = i * angleStep;
-                Vector3 dir = Quaternion.Euler(0, 0, angle) * Vector3.right;
-
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = spawnPos;
-                bu.side = SIDE.BOSS;
-                bu.dir = dir;
-                bu.speed = 5f;
-                ob.transform.rotation = Quaternion.Euler(0, 0, angle);
-
-            }
-
-            yield return new WaitForSeconds(ringInterval);
-        }
-    }
-    IEnumerator FireRandomCircleImmediaHighSped(int ringCount, float spawnRadius, int bulletsPerRing, float ringInterval)
-    {
-        //Debug.Log("随机圆形弹幕发射");
-
-        for (int ring = 0; ring < ringCount; ring++)
-        {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
-            // 随机偏移Boss位置
-            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
-            Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
-            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
-            RandomColorBoom();
-            // 先生成但不移动
-            float angleStep = 360f / bulletsPerRing;
-            for (int i = 0; i < bulletsPerRing; i++)
-            {
-                float angle = i * angleStep;
-                Vector3 dir = Quaternion.Euler(0, 0, angle) * Vector3.right;
-
-                GameObject ob;
-                Element bu;
-                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
-                ob.transform.position = spawnPos;
-                bu.side = SIDE.BOSS;
-                bu.dir = dir;
-                bu.speed = 10f;
-                ob.transform.rotation = Quaternion.Euler(0, 0, angle);
-
-            }
-
-            yield return new WaitForSeconds(ringInterval);
-        }
-    }
-    IEnumerator ActivateRing(List<Element> ring, float finalSpeed, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        foreach (var bullet in ring)
-        {
-            if (bullet != null && bullet.gameObject.activeInHierarchy)
-                bullet.speed = finalSpeed;
-        }
-    }
-    //-------------------------------------------------------------------
-
     // 协程：螺旋发射（可双螺旋）
     IEnumerator FireSpiral(int stepDeg, float interval, bool dual)
     {
@@ -1591,26 +1432,31 @@ public class Boss : Enemy
     //------------------------------（2）360度多圈弹幕圈 8 个圈一个周期-------------------------------
     IEnumerator State_FireScatter360()
     {
+        corNowSub = StartCoroutine(FireRandomFiveToPlayer(8, roundInterval));
+        yield return new WaitForSeconds(0.5f);
+
         corNow = StartCoroutine(FireScatter3602());
         yield return new WaitForSeconds(10f);
         if (corNow != null) StopCoroutine(corNow);
 
         RandomColorBoom();
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
 
         corNow = StartCoroutine(FireScatter360());
         yield return new WaitForSeconds(10f);
         if (corNow != null) StopCoroutine(corNow);
 
         RandomColorBoom();
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
 
         corNow = StartCoroutine(FireScatter3603());
         yield return new WaitForSeconds(13f);
         if (corNow != null) StopCoroutine(corNow);
 
         RandomColorBoom();
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.3f);
+
+        if (corNowSub != null) StopCoroutine(corNowSub);
 
         corNow = StartCoroutine(FireScatter3604());
         yield return new WaitForSeconds(14.2f);
@@ -1633,7 +1479,7 @@ public class Boss : Enemy
                    
                     float currentAngle = i * angleStep;
 
-                    SpawnBulletAtAngle(currentAngle, 5);
+                    SpawnBulletAtAngle(currentAngle, 7);
                 }
                 yield return new WaitForSeconds(fireScatter3TimePerWave);
             }
@@ -1653,7 +1499,7 @@ public class Boss : Enemy
                 {
                     float currentAngle = i * angleStep;
 
-                    SpawnBulletAtAngle(currentAngle, 5);
+                    SpawnBulletAtAngle(currentAngle, 7);
                 }
                 yield return new WaitForSeconds(fireScatterTimePerWave);
             }
@@ -1661,7 +1507,7 @@ public class Boss : Enemy
         }
 
     }
-    public float Value = 75f;
+
     IEnumerator FireScatter3604()
     {
         float angleStep = 360f / fireScatter4BulletsPerShot;
@@ -1686,7 +1532,7 @@ public class Boss : Enemy
                     ob.transform.position = this.transform.position;
                     bu.side = SIDE.BOSS; // 明确标记为Boss子弹，启用Element的dir移动
                     bu.dir = shootDirection;
-                    bu.speed = Mathf.Lerp(9, 3.5f, Time.smoothDeltaTime * Value);
+                    bu.speed = Mathf.Lerp(18f, 6.5f, Time.smoothDeltaTime * Value);
                     ob.transform.rotation = Quaternion.Euler(0, 0, currentAngle);
                 }
                 yield return new WaitForSeconds(fireScatter4TimePerWave);
@@ -1718,11 +1564,10 @@ public class Boss : Enemy
 
                 SpawnBulletAtAngle(currentAngle, 8);
             }
-            yield return new WaitForSeconds(0.2f);
+            yield return new WaitForSeconds(FireScatter360Interval);
         }
     }
     //------------------------------上述为360度多圈弹幕圈 8 个圈一个周期-------------------------------
-
     // （1）协程：朝向玩家的连射
     IEnumerator FireAimedStream(float interval, float noiseDeg)
     {
@@ -1739,6 +1584,134 @@ public class Boss : Enemy
             }
             yield return new WaitForSeconds(interval);
         }
+    }
+    IEnumerator FireScatter360Sub()
+    {
+        // 360度散射：将360度平均分配给所有子弹
+        float angleStep = 360f / bulletsPerShotSub; // 每个子弹之间的角度间隔
+
+        while(true)
+        {
+            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
+            for (int i = 0; i < bulletsPerShotSub; i++)
+            {
+                float currentAngle = i * angleStep;
+                SpawnBulletAtAngle(currentAngle, 4);
+            }
+            yield return new WaitForSeconds(FireScatter360IntervalSub);
+        }
+    }
+
+
+    private Coroutine[] fullScreenCoroutines;
+    private readonly Vector2[] leftPositions = {
+    new Vector2(-1f, 7.4f), new Vector2(-1f, 9.2f), new Vector2(-1f, 11f),
+    new Vector2(-1f, 12.7f), new Vector2(-1f, 5.6f), new Vector2(-1f, 3.8f), new Vector2(-1f, 2f)
+};
+
+    private readonly Vector2[] rightPositions = {
+    new Vector2(20.5f, 7.4f), new Vector2(20.5f, 9.2f), new Vector2(20.5f, 11f),
+    new Vector2(20.5f, 12.7f), new Vector2(20.5f, 5.6f), new Vector2(20.5f, 3.8f), new Vector2(20.5f, 2f)
+};
+
+    IEnumerator State_FullScreen()
+    {
+        // 初始化协程数组
+        fullScreenCoroutines = new Coroutine[14];
+        int index = 0;
+
+        while (true)
+        {
+            // 启动左侧协程
+            for (int i = 0; i < leftPositions.Length; i++)
+            {
+                fullScreenCoroutines[index++] = StartCoroutine(FireAniFullScreen(leftPositions[i], 1));
+            }
+
+            // 启动右侧协程
+            for (int i = 0; i < rightPositions.Length; i++)
+            {
+                fullScreenCoroutines[index++] = StartCoroutine(FireAniFullScreen(rightPositions[i], -1));
+            }
+            index = 0; // 重置索引
+            yield return new WaitForSeconds(105f);
+
+            // 停止所有协程，准备下一轮
+            StopFullScreen();
+        }
+    }
+
+    void StopFullScreen()
+    {
+        if (fullScreenCoroutines != null)
+        {
+            for (int i = 0; i < fullScreenCoroutines.Length; i++)
+            {
+                if (fullScreenCoroutines[i] != null)
+                {
+                    StopCoroutine(fullScreenCoroutines[i]);
+                    fullScreenCoroutines[i] = null; // 清除引用
+                }
+            }
+        }
+    }
+
+    // 通用的全屏射击方法
+    IEnumerator FireAniFullScreen(Vector2 position, int dir = 1)
+    {
+        while (true)
+        {
+            GameObject go = Instantiate(danPreFireBox, position, Quaternion.identity, this.danpreList.transform);
+            danpreListGo.Add(go);
+            go.GetComponent<Animator>().SetTrigger("Box");
+
+            for (int i = 0; i < maxRoundFullScreen; i++)
+            {
+                if (go != null)
+                {
+                    GameObject boom = Instantiate(danPre, go.transform.position, Quaternion.identity, this.danpreList.transform);
+                    GameObject ob;
+                    Element bu;
+                    GameUtil.BulletPoolGet(out ob, out bu, this.pool);
+                    ob.transform.position = go.transform.position;
+                    bu.side = SIDE.BOSS;
+                    bu.dir = go.transform.right * dir;
+                    bu.speed = spedFullScreen;
+                    yield return new WaitForSeconds(consistentBulletInterval);
+                }
+            }
+            Destroy(go);
+        }
+    }
+    IEnumerator FireRandomFiveToPlayer(int bulletsPerRing, float ringInterval)
+    {
+        //Debug.Log("随机圆形弹幕发射");
+
+        while (true)
+        {
+            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            // 随机偏移Boss位置
+            Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
+            Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
+            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
+            Vector3 dirSingle = (this.playerTarget.transform.position - this.transform.position).normalized;
+            for (int i = 0; i < bulletsPerRing; i++)
+            {
+                GameObject ob;
+                Element bu;
+                GameUtil.BulletPoolGet(out ob, out bu, this.pool);
+                ob.transform.position = spawnPos;
+                bu.side = SIDE.BOSS;
+                bu.dir = dirSingle;
+                bu.speed = 8f;
+                yield return new WaitForSeconds(singleBulletInterval);
+            }
+            yield return new WaitForSeconds(ringInterval);
+
+        }
+
+
     }
 
     //--------------------下述为Boss的基本属性函数-----------------------
@@ -1774,14 +1747,34 @@ public class Boss : Enemy
         );
         this.isInvincible = true;
         this.invincibleTime = 2f;
-        if (this.corNow != null) StopCoroutine(this.corNow);
-
+        ClearCoroutine();
+        StopAllCoroutines();
+        StartCoroutine(Attack());
         UIWorldElementManager.Instance.OnStartPhase();
         if (!this.player.CameraShake.isShaking)
             StartCoroutine(this.player.CameraShake.Shake());
         StartCoroutine(PlayFX());
         StartCoroutine(InvincibleWindow());
     }
+
+    private void ClearCoroutine()
+    {
+        if (this.corNow != null)
+        {
+            StopCoroutine(this.corNow);
+            this.corNow = null;
+        }
+        if (this.corNowSub != null) StopCoroutine(this.corNowSub);
+        if (fullScreenCoroutines != null) StopFullScreen();
+        if (this.danpreListGo.Count > 0) this.danpreListGo.Clear();
+        for (int i = 0; i < danpreList.transform.childCount; i++)
+        {
+            Transform child = danpreList.transform.GetChild(i);
+            GameObject go = child.gameObject;
+            Destroy(go);
+        }
+    }
+
     void SpawnBulletAtAngle(float angleDeg, float sped, int x = 1)
     {
         Vector3 shootDirection = Quaternion.Euler(0, 0, angleDeg) * Vector3.right;
@@ -1895,14 +1888,6 @@ public class Boss : Enemy
     {
         this.rb.simulated = true;
         this.ani.SetTrigger("BossFly");
-    }
-    void SetRotaFire()
-    {
-        this.pool1Ani.SetTrigger("rotate");
-    }
-    void SetNormal()
-    {
-        this.pool1Ani.SetTrigger("normal");
     }
     void OnDisable()
     {

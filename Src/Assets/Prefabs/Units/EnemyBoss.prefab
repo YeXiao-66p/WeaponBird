@@ -187,7 +187,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3626826667898133236
 Transform:
   m_ObjectHideFlags: 0
@@ -198,7 +198,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.5, y: -0.33, z: 0}
-  m_LocalScale: {x: -0.47434866, y: 0.47434866, z: 0.47434866}
+  m_LocalScale: {x: -0.47, y: 0.47434866, z: 0.47434866}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 375318121835652475}
@@ -306,7 +306,7 @@ MonoBehaviour:
   ani: {fileID: 6982159354904296015}
   rb: {fileID: -6241585531601510219}
   side: 3
-  bulletTemplate: {fileID: 8757443483845766138, guid: 8057dd4f9a881cc4e9546437e7444af1, type: 3}
+  bulletTemplate: {fileID: 8757443483845766138, guid: 8b3182956a074c84dba3ab7584c1a47e, type: 3}
   bulletList: {fileID: 2442453897659884547}
   isDeath: 0
   speed: 1
@@ -329,23 +329,42 @@ MonoBehaviour:
   danPre: {fileID: 0}
   danmuBluePre: {fileID: 8544855462401881384, guid: 47ce71d096794a842845f6bc826db847, type: 3}
   danpreList: {fileID: 2223221975656836528}
+  danpreListGo: []
   danmuRedPre: {fileID: 8544855462401881384, guid: 4c07ce2c34e48e849882214902341b69, type: 3}
   danmuPinkPreMove: {fileID: 1240610244384175845, guid: ebc043a8fbc0eb84e999912e2405fced, type: 3}
   danPreBlueMove: {fileID: 1240610244384175845, guid: 07c4b9fc722bf0a47a2d31801bebee82, type: 3}
   danPreRedL2RMove: {fileID: 8400168742081975120, guid: f75497bfec38d834bb907f6971d61967, type: 3}
   danPreRedR2LMove: {fileID: 4436974693078232789, guid: 1957996ef1acd594b9b0f2d723ddf7af, type: 3}
+  danPreFireBox: {fileID: 4433416688498353046, guid: da286ecc9d93a174496e3e5e5e9d7b04, type: 3}
+  danPrePinkFireBox: {fileID: 4433416688498353046, guid: e0018f8d7f36fc047a6d609dcfbad0ed, type: 3}
   bulletList2: {fileID: 6845660928428651231}
-  bulletTemplate2: {fileID: 8757443483845766138, guid: ee483a75a044a9b43a97856df52696c1, type: 3}
+  bulletTemplate2: {fileID: 8757443483845766138, guid: 3a71231803d656b4abde043eec579249, type: 3}
   Phases:
   - {fileID: 8492407853991802224, guid: 37fed042963bcc94bbae8c5c36ffd40b, type: 3}
   - {fileID: 6401148033473368655, guid: c513a3f646b24d74b81936659bf02cbc, type: 3}
   - {fileID: 4339901565336116030, guid: 3d269d4a1ad918346a869df4805095a2, type: 3}
   - {fileID: 9071573834150409404, guid: 5f3a8994e6977d54d8cddaa5e5df2a17, type: 3}
+  - {fileID: 9071573834150409404, guid: 5d4bd7de08960a4418658061514796b2, type: 3}
+  - {fileID: 9071573834150409404, guid: affdd1b9eafeec8488c6ad2d4c686336, type: 3}
+  - {fileID: 9071573834150409404, guid: e6efffe449745e147991833db5f57ff0, type: 3}
+  - {fileID: 9071573834150409404, guid: 77377ddc35e994348965d15f359ece6a, type: 3}
+  - {fileID: 9071573834150409404, guid: a1f2e546a5cde574eb60228869efc582, type: 3}
+  - {fileID: 9071573834150409404, guid: 1c5ab28d2753b7b45abb4259510ffb8e, type: 3}
+  - {fileID: 9071573834150409404, guid: 6533332567ab3204c879a6cbb057a1d6, type: 3}
+  - {fileID: 9071573834150409404, guid: 8805069891f4f8f4794e1ed238068ac6, type: 3}
+  - {fileID: 9071573834150409404, guid: c7e87e8a355394a4893a3994f54f27cb, type: 3}
+  - {fileID: 9071573834150409404, guid: d98cb48df8afee04eae3310680134234, type: 3}
   currentPhaseIndex: 0
   isInvincible: 0
   invincibleTime: 0
   invincibleDuration: 4
-  fireCircleNewbulletsPerRing: 48
+  consistentBulletInterval: 0.35
+  consistentInterval: 1
+  maxRoundFullScreen: 300
+  spedFullScreen: 3
+  bulletPerRoundSingle: 36
+  intervalSingle: 0.2
+  fireCircleNewbulletsPerRing: 30
   totalRound: 30
   fireCircleNewringInterval: 0.1
   bulletcnt: 18
@@ -361,13 +380,18 @@ MonoBehaviour:
   second: 0.15
   bulletsPerRing: 36
   spawnRadius: 3
-  ringCount: 10
+  ringCount: 50
   ringInterval: 0.4
+  bulletsPerRingQuick: 36
+  spawnRadiusQuick: 3
+  ringCountQuick: 50
+  ringIntervalQuick: 0.2
   spinSpeed1: 90
   interval1: 0.05
   bulletsPerWave: 12
   sped: 200
   bulletsPerShot: 36
+  FireScatter360Interval: 0.2
   aimOneAtPlayer: 1
   bulletsWavePerShot: 36
   waveRings: 36
@@ -391,15 +415,22 @@ MonoBehaviour:
   rotateHigh_j1: 150
   fireScatterTimePerWave: 0.35
   fireScatterTimePerRound: 1.25
-  fireScatterBulletsPerShot: 96
+  fireScatterBulletsPerShot: 64
   fireScatterTotalRound: 8
-  fireScatter3TimePerWave: 0.095
-  fireScatter3TimePerRound: 4
-  fireScatter3BulletsPerShot: 96
+  fireScatter3TimePerWave: 0.1
+  fireScatter3TimePerRound: 2
+  fireScatter3BulletsPerShot: 64
   fireScatter3TotalRound: 8
+  fireScatter4TimePerWave: 0.04
+  fireScatter4TimePerRound: 1
+  fireScatter4BulletsPerShot: 42
+  fireScatter4TotalRound: 8
+  bulletsPerShotSub: 64
   dropPrefab: {fileID: 0}
   col: {fileID: 0}
   leafParticlePrefab: {fileID: 3638270819646541462, guid: 9b013d0007fd7c143af36580ccfdbf72, type: 3}
+  quickInter: 0.1
+  pershot: 36
   offset: {x: 0, y: -4, z: 0}
 --- !u!1 &6845660928428651231
 GameObject:

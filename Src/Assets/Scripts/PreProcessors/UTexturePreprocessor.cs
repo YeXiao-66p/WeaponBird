@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
+#if UNITY_EDITOR
 public class UTexturePreprocessor : AssetPostprocessor
 {
     public static bool isHD = false;
@@ -40,3 +41,4 @@ public class UTexturePreprocessor : AssetPostprocessor
     }
 
 }
+#endif

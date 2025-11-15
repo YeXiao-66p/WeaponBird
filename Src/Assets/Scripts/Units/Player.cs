@@ -83,12 +83,17 @@ public class Player : Unit
     public override void OnStart()
     {
         base.OnStart();
-        //if(Manager.UnitManager.boss!=null)
-        //    this.Boss = Manager.UnitManager.boss;
+        if (Manager.UnitManager != null)
+        {
+            if (Manager.UnitManager.boss != null)
+                this.Boss = Manager.UnitManager.boss;
+        }
+       
     }
 
     public override void OnUpdate()
     {
+
         curSped = this.speed;
         if (!inputMode) return;
         if(!this.isFly) return;
@@ -102,7 +107,11 @@ public class Player : Unit
         this.starTime += Time.deltaTime;
         this.quickShootTime += Time.deltaTime;
         this.invincibleTimer += Time.deltaTime;
-
+        if (Manager.UnitManager != null)
+        {
+            if (Manager.UnitManager.boss != null)
+                this.Boss = Manager.UnitManager.boss;
+        }
         if (Input.GetKey(KeyCode.LeftShift))
         {
             this.curSped = this.shiftSped;
@@ -406,7 +415,10 @@ public class Player : Unit
 
     public override void Init()
     {
-        base.Init();
+        this.gameObject.SetActive(true);
+        this.transform.position = InitPos;
+        this.isDeath = false;
+        this.HP = this.HPMax;
         this.pet.gameObject.SetActive(true);
     }
 
@@ -500,13 +512,6 @@ public class Player : Unit
     {
         CleanupAllEffects();
     }
-
-    private void OnDestroy()
-    {
-        CleanupAllEffects();
-    }
-
-
 
     // 清理已完成特效的ID
     private void CleanupFinishedEffects()

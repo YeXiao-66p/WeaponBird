@@ -128,7 +128,7 @@ public class UIWorldElementManager : MonoSingleton<UIWorldElementManager>
         if(bs==null) return;
 
         this.bossSubSlide.value = Mathf.Lerp(this.bossSubSlide.value, this.bs.HP, 0.6f * Time.deltaTime);
-        if (bs.currentPhaseIndex <= 3)
+        if (bs.currentPhaseIndex <= 14)
         {
             this.bossSubSlide.maxValue = this.bs.Phases[bs.currentPhaseIndex].HPMax;
             this.bossSlide.maxValue = this.bs.Phases[bs.currentPhaseIndex].HPMax;

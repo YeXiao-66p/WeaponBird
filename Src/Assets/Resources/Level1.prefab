@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   levelID: 1
   Name: "\"\u521D\u59CB\u4E4B\u5730\""
-  Boss: {fileID: 4595987576187869336, guid: 733b242e95b3c1241b69587bb3efa9e5, type: 3}
+  Boss: {fileID: 4595987576187869336, guid: dfeddc3c73d11cd43915ff8673630a4c, type: 3}
   Rules:
   - {fileID: 8629117924572088996, guid: 0a3bdd266f4dc604ea9689231d157915, type: 3}
   - {fileID: 2107749127074356063, guid: 3695ce1513fb847408b618e57ab5d058, type: 3}

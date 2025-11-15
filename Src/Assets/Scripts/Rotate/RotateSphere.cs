@@ -1,7 +1,7 @@
 // 在另一个脚本中控制旋转
 using UnityEngine;
 
-public class RotationController : MonoBehaviour
+public class RotateSphere : MonoBehaviour
 {
     public AdvancedSphereRotator rotator;
 
