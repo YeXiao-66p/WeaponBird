@@ -33,7 +33,7 @@ public class Element : MonoBehaviour
         this.isSkill = false;
         this.transform.rotation = Quaternion.Euler(0, 0, -90);
     }
-    void Update()
+    void FixedUpdate()
     {
         this.timer += Time.deltaTime;
         if (!this.IsScreen())

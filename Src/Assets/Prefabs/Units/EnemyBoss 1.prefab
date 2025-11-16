@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.5, y: 1.5, z: 0.3}
+  m_LocalScale: {x: 0.8, y: 0.8, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3626826667898133236}
@@ -198,12 +198,13 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.5, y: -0.33, z: 0}
-  m_LocalScale: {x: -0.47, y: 0.47434866, z: 0.47434866}
+  m_LocalScale: {x: -1, y: 1, z: 0}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 375318121835652475}
   - {fileID: 4296691753568265067}
   - {fileID: 8629031929449191360}
+  - {fileID: 408235555546451486}
   - {fileID: 1847631169379252506}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -239,8 +240,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.13720846, y: 0.110931516}
-  m_Size: {x: 4.914222, y: 8.0337105}
+  m_Offset: {x: -0.237154, y: 0.03994775}
+  m_Size: {x: 2.3519878, y: 4.376242}
   m_Direction: 0
 --- !u!95 &6982159354904296015
 Animator:
@@ -306,7 +307,7 @@ MonoBehaviour:
   ani: {fileID: 6982159354904296015}
   rb: {fileID: -6241585531601510219}
   side: 3
-  bulletTemplate: {fileID: 8757443483845766138, guid: 8057dd4f9a881cc4e9546437e7444af1, type: 3}
+  bulletTemplate: {fileID: 8757443483845766138, guid: 8b3182956a074c84dba3ab7584c1a47e, type: 3}
   bulletList: {fileID: 2442453897659884547}
   isDeath: 0
   speed: 1
@@ -314,7 +315,7 @@ MonoBehaviour:
   HP: 3000
   HPMax: 3000
   inputMode: 0
-  maxBullet: 3000
+  maxBullet: 2250
   power: 1
   isFly: 0
   enemyType: 2
@@ -327,9 +328,11 @@ MonoBehaviour:
   offy: 65
   pool1Ani: {fileID: 858180187106793425}
   danPre: {fileID: 0}
-  danmuBluePre: {fileID: 8544855462401881384, guid: 47ce71d096794a842845f6bc826db847, type: 3}
-  danpreList: {fileID: 2223221975656836528}
   danmuRedPre: {fileID: 8544855462401881384, guid: 4c07ce2c34e48e849882214902341b69, type: 3}
+  danmuBluePre: {fileID: 8544855462401881384, guid: 47ce71d096794a842845f6bc826db847, type: 3}
+  danmuPinkPre: {fileID: 8544855462401881384, guid: 07821784080273447afd9bfbcce417a8, type: 3}
+  danpreList: {fileID: 2223221975656836528}
+  danpreListGo: []
   danmuPinkPreMove: {fileID: 1240610244384175845, guid: ebc043a8fbc0eb84e999912e2405fced, type: 3}
   danPreBlueMove: {fileID: 1240610244384175845, guid: 07c4b9fc722bf0a47a2d31801bebee82, type: 3}
   danPreRedL2RMove: {fileID: 8400168742081975120, guid: f75497bfec38d834bb907f6971d61967, type: 3}
@@ -337,16 +340,33 @@ MonoBehaviour:
   danPreFireBox: {fileID: 4433416688498353046, guid: da286ecc9d93a174496e3e5e5e9d7b04, type: 3}
   danPrePinkFireBox: {fileID: 4433416688498353046, guid: e0018f8d7f36fc047a6d609dcfbad0ed, type: 3}
   bulletList2: {fileID: 6845660928428651231}
-  bulletTemplate2: {fileID: 8757443483845766138, guid: ee483a75a044a9b43a97856df52696c1, type: 3}
+  bulletTemplate2: {fileID: 8757443483845766138, guid: 3a71231803d656b4abde043eec579249, type: 3}
+  bulletList3: {fileID: 4633973688100772944}
+  bulletTemplate3: {fileID: 8757443483845766138, guid: 8fbc34dacae80b5449ddf2964c69f7ff, type: 3}
   Phases:
   - {fileID: 8492407853991802224, guid: 37fed042963bcc94bbae8c5c36ffd40b, type: 3}
   - {fileID: 6401148033473368655, guid: c513a3f646b24d74b81936659bf02cbc, type: 3}
   - {fileID: 4339901565336116030, guid: 3d269d4a1ad918346a869df4805095a2, type: 3}
   - {fileID: 9071573834150409404, guid: 5f3a8994e6977d54d8cddaa5e5df2a17, type: 3}
+  - {fileID: 9071573834150409404, guid: 5d4bd7de08960a4418658061514796b2, type: 3}
+  - {fileID: 9071573834150409404, guid: affdd1b9eafeec8488c6ad2d4c686336, type: 3}
+  - {fileID: 9071573834150409404, guid: e6efffe449745e147991833db5f57ff0, type: 3}
+  - {fileID: 9071573834150409404, guid: 77377ddc35e994348965d15f359ece6a, type: 3}
+  - {fileID: 9071573834150409404, guid: a1f2e546a5cde574eb60228869efc582, type: 3}
+  - {fileID: 9071573834150409404, guid: 1c5ab28d2753b7b45abb4259510ffb8e, type: 3}
+  - {fileID: 9071573834150409404, guid: 6533332567ab3204c879a6cbb057a1d6, type: 3}
+  - {fileID: 9071573834150409404, guid: 8805069891f4f8f4794e1ed238068ac6, type: 3}
+  - {fileID: 9071573834150409404, guid: c7e87e8a355394a4893a3994f54f27cb, type: 3}
+  - {fileID: 9071573834150409404, guid: d98cb48df8afee04eae3310680134234, type: 3}
   currentPhaseIndex: 0
   isInvincible: 0
   invincibleTime: 0
   invincibleDuration: 4
+  interTes: 0.04
+  interStarAni: 0.2
+  bulletsPerRingStarAni: 42
+  interStar: 0.2
+  bulletsPerRingStar: 84
   consistentBulletInterval: 0.35
   consistentInterval: 1
   maxRoundFullScreen: 300
@@ -404,21 +424,55 @@ MonoBehaviour:
   rotateHigh_j1: 150
   fireScatterTimePerWave: 0.35
   fireScatterTimePerRound: 1.25
-  fireScatterBulletsPerShot: 84
+  fireScatterBulletsPerShot: 64
   fireScatterTotalRound: 8
   fireScatter3TimePerWave: 0.1
   fireScatter3TimePerRound: 2
-  fireScatter3BulletsPerShot: 84
+  fireScatter3BulletsPerShot: 64
   fireScatter3TotalRound: 8
-  fireScatter4TimePerWave: 0.1
-  fireScatter4TimePerRound: 2
-  fireScatter4BulletsPerShot: 84
+  fireScatter4TimePerWave: 0.04
+  fireScatter4TimePerRound: 1
+  fireScatter4BulletsPerShot: 42
   fireScatter4TotalRound: 8
+  Value: 100
   bulletsPerShotSub: 64
   dropPrefab: {fileID: 0}
   col: {fileID: 0}
   leafParticlePrefab: {fileID: 3638270819646541462, guid: 9b013d0007fd7c143af36580ccfdbf72, type: 3}
+  quickInter: 0.1
+  pershot: 36
   offset: {x: 0, y: -4, z: 0}
+--- !u!1 &4633973688100772944
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 408235555546451486}
+  m_Layer: 0
+  m_Name: BossBulletPool3
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &408235555546451486
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4633973688100772944}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3626826667898133236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6845660928428651231
 GameObject:
   m_ObjectHideFlags: 0
