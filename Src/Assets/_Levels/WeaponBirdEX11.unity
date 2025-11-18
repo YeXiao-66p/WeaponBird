@@ -2429,33 +2429,17 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -1614215631631094503, guid: dfeddc3c73d11cd43915ff8673630a4c, type: 3}
-      propertyPath: interStar
-      value: 0.1
+      propertyPath: Phases.Array.size
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: -1614215631631094503, guid: dfeddc3c73d11cd43915ff8673630a4c, type: 3}
-      propertyPath: maxBullet
-      value: 2250
-      objectReference: {fileID: 0}
-    - target: {fileID: -1614215631631094503, guid: dfeddc3c73d11cd43915ff8673630a4c, type: 3}
-      propertyPath: bulletTemplate
+      propertyPath: Phases.Array.data[16]
       value: 
-      objectReference: {fileID: 8757443483845766138, guid: 8b3182956a074c84dba3ab7584c1a47e, type: 3}
+      objectReference: {fileID: 9071573834150409404, guid: db82ec4b6c62d354f815dfdd6369454c, type: 3}
     - target: {fileID: -1614215631631094503, guid: dfeddc3c73d11cd43915ff8673630a4c, type: 3}
-      propertyPath: bulletTemplate2
+      propertyPath: Phases.Array.data[17]
       value: 
-      objectReference: {fileID: 8757443483845766138, guid: 3a71231803d656b4abde043eec579249, type: 3}
-    - target: {fileID: -1614215631631094503, guid: dfeddc3c73d11cd43915ff8673630a4c, type: 3}
-      propertyPath: bulletTemplate3
-      value: 
-      objectReference: {fileID: 8757443483845766138, guid: 8fbc34dacae80b5449ddf2964c69f7ff, type: 3}
-    - target: {fileID: -1614215631631094503, guid: dfeddc3c73d11cd43915ff8673630a4c, type: 3}
-      propertyPath: bulletsPerRingStar
-      value: 120
-      objectReference: {fileID: 0}
-    - target: {fileID: -1614215631631094503, guid: dfeddc3c73d11cd43915ff8673630a4c, type: 3}
-      propertyPath: bulletsPerRingStarAni
-      value: 120
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 9071573834150409404, guid: 75e9b2304d58d154b892ebb5bef9aee2, type: 3}
     - target: {fileID: 3626826667898133236, guid: dfeddc3c73d11cd43915ff8673630a4c, type: 3}
       propertyPath: m_LocalPosition.x
       value: 14.95
@@ -8653,7 +8637,7 @@ MonoBehaviour:
   HPMax: 600
   inputMode: 1
   maxBullet: 100
-  power: 5
+  power: 100
   isFly: 1
   CameraShake: {fileID: 963194230}
   pet: {fileID: 3824972659733469060}
@@ -15627,7 +15611,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6103574650425522608
 RectTransform:
   m_ObjectHideFlags: 0
@@ -19050,7 +19034,7 @@ SceneRoots:
   - {fileID: 3354401078244002799}
   - {fileID: 9018472927267371914}
   - {fileID: 6868754204951810582}
-  - {fileID: 8169922529159657789}
   - {fileID: 2050692591}
   - {fileID: 4742891093186129020}
   - {fileID: 654816809}
+  - {fileID: 8169922529159657789}

@@ -265,7 +265,6 @@ public class Player : Unit
 
     IEnumerator HealSelf(int times, float interval)
     {
-        Debug.Log("进入Heal Time");
         for (int i = 0; i < times; i++)
         {
             this.AddHp(10);

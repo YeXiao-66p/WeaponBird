@@ -168,6 +168,59 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!1 &2621003758874956061
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 535926865081856014}
+  - component: {fileID: 3108667585081537714}
+  m_Layer: 0
+  m_Name: FifBoxRotate
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &535926865081856014
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2621003758874956061}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 0}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3626826667898133236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &3108667585081537714
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2621003758874956061}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cbf122dd485761d46a55b55c3c743290, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &4595987576187869336
 GameObject:
   m_ObjectHideFlags: 0
@@ -205,6 +258,7 @@ Transform:
   - {fileID: 4296691753568265067}
   - {fileID: 8629031929449191360}
   - {fileID: 408235555546451486}
+  - {fileID: 535926865081856014}
   - {fileID: 1847631169379252506}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -307,7 +361,7 @@ MonoBehaviour:
   ani: {fileID: 6982159354904296015}
   rb: {fileID: -6241585531601510219}
   side: 3
-  bulletTemplate: {fileID: 8757443483845766138, guid: 0cc66632c974dc4499a0adb464d68e1f, type: 3}
+  bulletTemplate: {fileID: 8757443483845766138, guid: 8b3182956a074c84dba3ab7584c1a47e, type: 3}
   bulletList: {fileID: 2442453897659884547}
   isDeath: 0
   speed: 1
@@ -327,6 +381,10 @@ MonoBehaviour:
   offx: 99
   offy: 65
   pool1Ani: {fileID: 858180187106793425}
+  danPrePinkFireBox2: {fileID: 4433416688498353046, guid: 140802017b297bd47a33ba1927651d65, type: 3}
+  FireBoxPinkFifPre: {fileID: 4433416688498353046, guid: 5c74a34527dda7c448fe1ded922b923e, type: 3}
+  FireBoxPinkFifParent: {fileID: 2621003758874956061}
+  FireBoxPinkFifParentAni: {fileID: 3108667585081537714}
   danPre: {fileID: 0}
   danmuRedPre: {fileID: 8544855462401881384, guid: 4c07ce2c34e48e849882214902341b69, type: 3}
   danmuBluePre: {fileID: 8544855462401881384, guid: 47ce71d096794a842845f6bc826db847, type: 3}
@@ -340,9 +398,9 @@ MonoBehaviour:
   danPreFireBox: {fileID: 4433416688498353046, guid: da286ecc9d93a174496e3e5e5e9d7b04, type: 3}
   danPrePinkFireBox: {fileID: 4433416688498353046, guid: e0018f8d7f36fc047a6d609dcfbad0ed, type: 3}
   bulletList2: {fileID: 6845660928428651231}
-  bulletTemplate2: {fileID: 8757443483845766138, guid: bfe39ddc1c8e5734a8b1ed33bfcd2066, type: 3}
+  bulletTemplate2: {fileID: 8757443483845766138, guid: 3a71231803d656b4abde043eec579249, type: 3}
   bulletList3: {fileID: 4633973688100772944}
-  bulletTemplate3: {fileID: 8757443483845766138, guid: 981d11f499a9dc94c80cdd9f0c0d782e, type: 3}
+  bulletTemplate3: {fileID: 8757443483845766138, guid: 8fbc34dacae80b5449ddf2964c69f7ff, type: 3}
   Phases:
   - {fileID: 8492407853991802224, guid: 37fed042963bcc94bbae8c5c36ffd40b, type: 3}
   - {fileID: 6401148033473368655, guid: c513a3f646b24d74b81936659bf02cbc, type: 3}
@@ -358,15 +416,20 @@ MonoBehaviour:
   - {fileID: 9071573834150409404, guid: 8805069891f4f8f4794e1ed238068ac6, type: 3}
   - {fileID: 9071573834150409404, guid: c7e87e8a355394a4893a3994f54f27cb, type: 3}
   - {fileID: 9071573834150409404, guid: d98cb48df8afee04eae3310680134234, type: 3}
+  - {fileID: 9071573834150409404, guid: 1bdc86acd4d2e654f862f7e4247b698a, type: 3}
+  - {fileID: 9071573834150409404, guid: afe134191a9e52e46afae0223f464fbb, type: 3}
+  - {fileID: 9071573834150409404, guid: db82ec4b6c62d354f815dfdd6369454c, type: 3}
   currentPhaseIndex: 0
   isInvincible: 0
   invincibleTime: 0
   invincibleDuration: 4
   interTes: 0.04
-  interStarAni: 0.2
-  bulletsPerRingStarAni: 42
-  interStar: 0.2
-  bulletsPerRingStar: 84
+  interStarAni: 0.1
+  drawInterAni: 4
+  bulletsPerRingStarAni: 350
+  interStar: 0.008
+  interStarQuick: 0.005
+  bulletsPerRingStar: 135
   consistentBulletInterval: 0.35
   consistentInterval: 1
   maxRoundFullScreen: 300
@@ -441,6 +504,12 @@ MonoBehaviour:
   leafParticlePrefab: {fileID: 3638270819646541462, guid: 9b013d0007fd7c143af36580ccfdbf72, type: 3}
   quickInter: 0.1
   pershot: 36
+  bulletsPerRing520: 36
+  ringInterval520: 0.8
+  FifBoomBulletInterval: 0.05
+  spedFif: 3
+  maxFifBoomBullet: 3000
+  LianToPlayerInter: 0.02
   offset: {x: 0, y: -4, z: 0}
 --- !u!1 &4633973688100772944
 GameObject:

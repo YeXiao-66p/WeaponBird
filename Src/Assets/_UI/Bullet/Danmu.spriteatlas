@@ -53,8 +53,8 @@ SpriteAtlas:
     - {fileID: 21300000, guid: b924e5a096d6bb449ac5b93dbb3700cd, type: 3}
     - {fileID: 21300000, guid: e78b42d43c4f1584fb6f2c9a64fe11b5, type: 3}
     - {fileID: 21300000, guid: 98b90a825395b4645b5f25c51d59de2f, type: 3}
-    - {fileID: 21300000, guid: ce34894a265bdde45a2e176f9f6eb168, type: 3}
-    - {fileID: 21300000, guid: 3b416d5c87b48b44cb6527de91c90245, type: 3}
+    - {fileID: 21300000, guid: 227ec3bca19fb8e4c90a9ae631efb287, type: 3}
+    - {fileID: 21300000, guid: b99718e0551e4ed41ad651ca61ef7636, type: 3}
     - {fileID: 21300000, guid: 2478e37e5c612ac48a4b7c34759d1fa1, type: 3}
     - {fileID: 21300000, guid: 459f6496751cc9c4787e71da146515a1, type: 3}
     - {fileID: 21300000, guid: 6ca0c9eb54517554ba82c52aa80733e1, type: 3}
@@ -63,14 +63,15 @@ SpriteAtlas:
     - {fileID: 21300000, guid: 762a07df3f18dc5498a635b741caaee0, type: 3}
     - {fileID: 21300000, guid: f5372e75911e7044486d365d72512ccf, type: 3}
     - {fileID: 21300000, guid: 78246d2cee7f20743aa3d203e1c950da, type: 3}
-    - {fileID: 21300000, guid: 3d7c8521dfa9fae4ca1320d6ff3d7cd8, type: 3}
+    - {fileID: 21300000, guid: 52a696d0bde81ab48bb1f98d823d399a, type: 3}
     - {fileID: 21300000, guid: 59ec34dff24ca034e846d6a2d7bbbb11, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
     - b924e5a096d6bb449ac5b93dbb3700cd: 21300000
-    - 3d7c8521dfa9fae4ca1320d6ff3d7cd8: 21300000
+    - 52a696d0bde81ab48bb1f98d823d399a: 21300000
+    - b99718e0551e4ed41ad651ca61ef7636: 21300000
     - 377c8ab12a9e40a4a9d83ab2a5f4bcf8: 21300000
     - 8b594172a8b4c5b47b932adf02d10681: 21300000
     - 98b90a825395b4645b5f25c51d59de2f: 21300000
@@ -80,11 +81,10 @@ SpriteAtlas:
     - 0dee1706d3e840c428cbde7487de9f98: 21300000
     - 89ba921642003484abe02c7ef09ff515: 21300000
     - 459f6496751cc9c4787e71da146515a1: 21300000
-    - ce34894a265bdde45a2e176f9f6eb168: 21300000
     - 1e4ad4bbc16d54541abd1eea6083bc6a: 21300000
     - 6ca0c9eb54517554ba82c52aa80733e1: 21300000
     - 78246d2cee7f20743aa3d203e1c950da: 21300000
-    - 3b416d5c87b48b44cb6527de91c90245: 21300000
+    - 227ec3bca19fb8e4c90a9ae631efb287: 21300000
     - 2478e37e5c612ac48a4b7c34759d1fa1: 21300000
     - 59ec34dff24ca034e846d6a2d7bbbb11: 21300000
     - 762a07df3f18dc5498a635b741caaee0: 21300000
@@ -92,7 +92,8 @@ SpriteAtlas:
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: b924e5a096d6bb449ac5b93dbb3700cd, type: 3}
-  - {fileID: 21300000, guid: 3d7c8521dfa9fae4ca1320d6ff3d7cd8, type: 3}
+  - {fileID: 21300000, guid: 52a696d0bde81ab48bb1f98d823d399a, type: 3}
+  - {fileID: 21300000, guid: b99718e0551e4ed41ad651ca61ef7636, type: 3}
   - {fileID: 21300000, guid: 377c8ab12a9e40a4a9d83ab2a5f4bcf8, type: 3}
   - {fileID: 21300000, guid: 8b594172a8b4c5b47b932adf02d10681, type: 3}
   - {fileID: 21300000, guid: 98b90a825395b4645b5f25c51d59de2f, type: 3}
@@ -102,18 +103,18 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 0dee1706d3e840c428cbde7487de9f98, type: 3}
   - {fileID: 21300000, guid: 89ba921642003484abe02c7ef09ff515, type: 3}
   - {fileID: 21300000, guid: 459f6496751cc9c4787e71da146515a1, type: 3}
-  - {fileID: 21300000, guid: ce34894a265bdde45a2e176f9f6eb168, type: 3}
   - {fileID: 21300000, guid: 1e4ad4bbc16d54541abd1eea6083bc6a, type: 3}
   - {fileID: 21300000, guid: 6ca0c9eb54517554ba82c52aa80733e1, type: 3}
   - {fileID: 21300000, guid: 78246d2cee7f20743aa3d203e1c950da, type: 3}
-  - {fileID: 21300000, guid: 3b416d5c87b48b44cb6527de91c90245, type: 3}
+  - {fileID: 21300000, guid: 227ec3bca19fb8e4c90a9ae631efb287, type: 3}
   - {fileID: 21300000, guid: 2478e37e5c612ac48a4b7c34759d1fa1, type: 3}
   - {fileID: 21300000, guid: 59ec34dff24ca034e846d6a2d7bbbb11, type: 3}
   - {fileID: 21300000, guid: 762a07df3f18dc5498a635b741caaee0, type: 3}
   - {fileID: 21300000, guid: 9cb75adf347f6d94e9252eeffc7f0b2e, type: 3}
   m_PackedSpriteNamesToIndex:
   - BossBul_CirclePink
-  - BossBul_CardPink
+  - BossBul_CardRedPro
+  - BossBul_CardPinkPro
   - BoomStar
   - BossBul_BlankCircleRed
   - BossBoom_boomBlueS
@@ -123,11 +124,10 @@ SpriteAtlas:
   - BossBul_BlankCircleBlue
   - Player_Star
   - Player_Bullet
-  - BossBul_CardRed
   - Pet_Star
   - Boss_PinkBag
   - maskRound
-  - BossBul_CardBlue
+  - BossBul_CardBluePro
   - BossBoom_pinkBoom
   - enemyBul
   - BossBul_CircleRed

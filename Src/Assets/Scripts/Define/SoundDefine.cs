@@ -17,6 +17,6 @@ public class SoundDefine
 
     public const string AttackStar = "StarAttack";
     public const string CoinDrop = "CoinDrop";
-    public const string Biu = "Biubiubiu";
+    public const string Ele = "soundEle";
 
 }

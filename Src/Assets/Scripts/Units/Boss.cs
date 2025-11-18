@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 using static Const;
+using static UnityEngine.Rendering.DebugUI.Table;
 
 public class Boss : Enemy
 {
     public Animator pool1Ani;
+    public GameObject danPrePinkFireBox2;
+    public GameObject FireBoxPinkFifPre;
+    public GameObject FireBoxPinkFifParent;
+    public Animator FireBoxPinkFifParentAni;
 
     public GameObject danPre;
     private GameObject danPre2;     //改变弹幕种类
@@ -54,10 +61,13 @@ public class Boss : Enemy
     public float interTes = 0.04f;
     [Header("DrawStarAni and Coding")]
 
-    public float interStarAni = 0.2f;
-    public int bulletsPerRingStarAni = 120;
-    public float interStar = 0.2f;
-    public int bulletsPerRingStar = 84;
+    public float interStarAni = 0.005f;
+    public float drawInterAni = 4f;
+
+    public int bulletsPerRingStarAni = 135;
+    public float interStar = 0.008f;
+    public float interStarQuick = 0.005f;
+    public int bulletsPerRingStar = 135;
     [Header("Full Screen LowSpeed Bullet")]
     public float consistentBulletInterval = 0.35f;
     public float consistentInterval = 1f;
@@ -187,6 +197,12 @@ public class Boss : Enemy
 
     public float quickInter = 0.4f;
     public int pershot = 36;
+    public int bulletsPerRing520 = 36;
+    public float ringInterval520 = 0.8f;
+
+    public float FifBoomBulletInterval = 0.05f;
+    public float spedFif = 3f;
+    public int maxFifBoomBullet = 3000;
 
 
     public override void OnStart()
@@ -208,12 +224,14 @@ public class Boss : Enemy
             this.player = playerTarget.GetComponent<Player>();
         }
 
-        this.pool2 = this.pool;
-        this.danPre2 = this.danPre;
         danPre = this.danmuBluePre;
         pool = this.bulletPool2;
-    }
+        this.pool2 = this.pool;
+        this.danPre2 = this.danPre;
 
+        FireBoxPinkFifParentAni = FireBoxPinkFifParent.GetComponent<Animator>();
+    }
+        
     public override void OnUpdate()
     {
         if (this.playerTarget != null)
@@ -241,6 +259,7 @@ public class Boss : Enemy
         yield return new WaitForSeconds(6f);
         yield return Attack();
     }
+    public float LianToPlayerInter = 0.04f;
     /// <summary>
     /// Boss的弹幕打击协程函数
     /// </summary>
@@ -249,14 +268,34 @@ public class Boss : Enemy
     {
         while (true)
         {
-            //RandomColorBoom();
-
             //yield return DrawStarAni();
-            //yield return new WaitForSeconds(200f);
+            //yield return new WaitForSeconds(7f + interStarAni);
 
-            ColorBoomChange();
-            yield return DrawStar();
-            yield return new WaitForSeconds(200f);
+            //RandomColorBoom();
+            //yield return StartCoroutine(Fire520());
+
+            //ColorBoomChange();
+
+            //yield return new WaitForSeconds(200f);
+            //corNowSub = StartCoroutine(FireRandomFiveToPlayer(8, roundInterval));
+            //yield return new WaitForSeconds(0.5f);
+            //corNow = StartCoroutine(DrawStarQuick(this.interStarQuick));
+
+            //yield return new WaitForSeconds(30f);
+            //if (corNow != null) StopCoroutine(corNow);
+            //corNow = StartCoroutine(DrawStar(this.interStar));
+            //yield return new WaitForSeconds(30f);
+            //if (corNow != null) StopCoroutine(corNow);
+            //if (corNowSub != null) StopCoroutine(corNowSub);
+            //yield return DrawStarQuick(this.interStarQuick);
+            //yield return new WaitForSeconds(10f);
+
+            //yield return DrawStar(this.interStar);
+            //yield return new WaitForSeconds(10f);
+            //yield return FifBoom();
+            //yield return new WaitForSeconds(200f);
+            //yield return FireRotatingLianToPlayer(LianToPlayerInter);
+            //yield return new WaitForSeconds(200f);
             continue;
 
             if (this.currentPhaseIndex == 0)
@@ -289,11 +328,13 @@ public class Boss : Enemy
                 RandomColorBoom();
                 yield return StartCoroutine(State_FullScreen());
             }
+        
+          
 
             if (this.currentPhaseIndex == 3)
             {
                 ColorBoomChange();
-                yield return DrawStar();
+                yield return DrawStar(this.interStar);
                 yield return new WaitForSeconds(200f);
             }
 
@@ -400,48 +441,189 @@ public class Boss : Enemy
                 RandomColorBoom();
                 yield return StartCoroutine(State_FireAniMove());
             }
+            if (this.currentPhaseIndex == 16)
+            {
+                RandomColorBoom();
+                yield return FifBoom();
+                yield return new WaitForSeconds(420f);
+            }
+            if (this.currentPhaseIndex == 17)
+            {
+                RandomColorBoom();
+                yield return StartCoroutine(DrawStarQuick(this.interStarQuick));
+                yield return new WaitForSeconds(200f);
+            }
             yield return null;
         }
     }
+    private Coroutine[] FifBoomCoroutines;
+    private readonly Vector3[] leftPositions2 = {
+        new Vector3(0f, 3f, 0),         //N
+        new Vector3(-3f, 0f, 0),        //W
+        new Vector3(3f, 0f, 0),         //E
+        new Vector3(0f, -3f, 0),        //S
+        new Vector3(2f, 2f, 0),         //EN
+        new Vector3(2f, -2f, 0),        //ES
+        new Vector3(-2f, 2f, 0),        //WN
+        new Vector3(-2f, -2f, 0),       //WS
 
+};
+    IEnumerator FifBoom()
+    {
+        // 初始化协程数组
+        FifBoomCoroutines = new Coroutine[8];
+        while (true)
+        {
+            this.FireBoxPinkFifParentAni.SetTrigger("Rotate");
+            // 启动左侧协程
+            for (int i = 0; i < leftPositions2.Length; i++)
+            {
+                FifBoomCoroutines[i] = StartCoroutine(FireAniFullScreen2(leftPositions2[i] + this.FireBoxPinkFifParent.transform.position, i));
+            }
+            yield return new WaitForSeconds(210f);
+        }
+    }
+    IEnumerator FireAniFullScreen2(Vector2 position, int index)
+    {
+        Animator ani;
+        GameObject go = Instantiate(this.FireBoxPinkFifPre, position, Quaternion.identity, this.FireBoxPinkFifParent.transform);
+        while (true)
+        {
+
+            if (index == 0)
+            {
+                ani = go.GetComponent<Animator>();
+                ani.SetTrigger("RotateN");
+            }
+            if (index == 1)
+            {
+                ani = go.GetComponent<Animator>();
+                ani.SetTrigger("RotateW");
+            }
+            if (index == 2)
+            {
+                ani = go.GetComponent<Animator>();
+                ani.SetTrigger("RotateE");
+            }
+            if (index == 3)
+            {
+                ani = go.GetComponent<Animator>();
+                ani.SetTrigger("RotateS");
+            }
+            if (index == 4)
+            {
+                ani = go.GetComponent<Animator>();
+                ani.SetTrigger("RotateEN");
+            }
+            if (index == 5)
+            {
+                ani = go.GetComponent<Animator>();
+                ani.SetTrigger("RotateES");
+            }
+            if (index == 6)
+            {
+                ani = go.GetComponent<Animator>();
+                ani.SetTrigger("RotateWN");
+            }
+            if (index == 7)
+            {
+                ani = go.GetComponent<Animator>();
+                ani.SetTrigger("RotateWS");
+            }
+            if (index % 2 == 0)
+            {
+                index = 1;
+            }
+            else index = -1;
+                yield return StartCoroutine(FireVerticalStreams2(go, maxFifBoomBullet,interTes, index));
+
+            yield return new WaitForSeconds(interTes * 80);
+            Destroy(go);
+        }           
+    }
+    // 新增的移动协程：先移动到中心，再移动回起点
+    IEnumerator MoveToAndFromCenter(GameObject obj, Vector3 startPos, Vector3 center, float speed)
+    {
+        if (obj == null) yield break;
+        while(obj != null)
+        {
+            // 第一阶段：移动到中心点
+            while (obj != null && Vector3.Distance(obj.transform.position, center) > 0.1f)
+            {
+                Vector3 direction = (center - obj.transform.position).normalized;
+                obj.transform.position += direction * speed * Time.deltaTime;
+                yield return null;
+            }
+
+            if (obj == null) yield break;
+
+            // 确保精确到达中心点
+            obj.transform.position = center;
+
+            // 第二阶段：移动回出生点
+            while (obj != null && Vector3.Distance(obj.transform.position, startPos) > 0.1f)
+            {
+                Vector3 direction = (startPos - obj.transform.position).normalized;
+                obj.transform.position += direction * speed * Time.deltaTime;
+                yield return null;
+            }
+
+            if (obj != null)
+            {
+                obj.transform.position = startPos;
+            }
+        }
+        
+    }
     IEnumerator DrawStarAni()
     {
-        while(true)
+        Vector3 dir;
+        GameObject box;
+        Animator animator;
+        while (true)
         {
-            GameObject box = Instantiate(this.danPreBlueMove, this.transform.position + new Vector3(0, 5, 0), Quaternion.identity, this.danpreList.transform);
-            Vector3 dir;
-            List<Element> ringBullets = new List<Element>();
-            Animator animator = box.GetComponent<Animator>();
+            box = Instantiate(this.danPreBlueMove, this.transform.position + new Vector3(0, 5, 0), Quaternion.identity, this.danpreList.transform);
+            animator = box.GetComponent<Animator>();
             if (animator != null) animator.SetTrigger("Star");
 
             //5 的简单绘制
             for (int j = 1; j < 6; j++)
-            {
-
-                for (int i = 0; i < bulletsPerRingStarAni; i++)
                 {
-                    GameObject go = Instantiate(danPre, box.transform.position, Quaternion.identity, this.danpreList.transform);
-                    float angle = i * bulletsPerRingStarAni;
-                    dir = GetBulletFromPool(box.transform.position, ringBullets, angle, this.pool);
-                    yield return new WaitForSeconds(interStarAni / bulletsPerRingStarAni);
+
+                    for (int i = 0; i < bulletsPerRingStarAni; i++)
+                    {
+                        if (box != null)
+                        {
+                            float angle = i * bulletsPerRingStarAni;
+                            dir = GetBulletFromPool(box.transform.position, ringBullets1, angle, this.pool, -1, true);
+                            GameObject go = Instantiate(danPre, box.transform.position, Quaternion.identity, this.danpreList.transform);
+                            yield return new WaitForSeconds(interStarAni / bulletsPerRingStarAni);
+                        }
+                        else
+                        {
+                            break;
+                        }
+
+
+                    }
                 }
-            }
+
             // 整圈延迟启动
-            StartCoroutine(ActivateRing(ringBullets, 4f, 0.5f));
-            Destroy(box);
-            yield return new WaitForSeconds(6f);
+            StartCoroutine(ActivateRing(ringBullets1, 4f, 0.5f));
+
+            yield return new WaitForSeconds(drawInterAni);
         }
         
     }
-    IEnumerator DrawStar()
+    List<Element> ringBullets1 = new List<Element>();
+    List<Element> ringBullets2 = new List<Element>();
+    IEnumerator DrawStar(float interStar)
     {
-        float R = 3;
+        float R = 4;
         Vector3 spawnPos = this.transform.position + new Vector3(0, R, 0);
         Vector3 spawnPos2 = this.transform.position + new Vector3(-4, R, 0);
         Vector3 spawnPosTemp = spawnPos;
         Vector3 dir;
-        List<Element> ringBullets1 = new List<Element>();
-        List<Element> ringBullets2 = new List<Element>();
         // 计算旋转45度后的五角星边向量，并每个点向左偏移2f
         float rotation = 45f * Mathf.Deg2Rad;
         // 创建旋转矩阵函数
@@ -464,14 +646,6 @@ public class Boss : Enemy
     new Vector3(0.951f * R,  0.309f * R, 0),  // 左上
     new Vector3(-0.5878f * R,  - 0.809f * R, 0)  // 右下
 };
-//        Vector3[] originalPoints = {
-//    new Vector3(0, R, 0),          // 顶部
-//    new Vector3(0.5878f * R, R - 0.809f * R, 0), //左下
-//    new Vector3(- 0.951f * R, R + 0.309f * R, 0), // 右上
-//    new Vector3(0.951f * R, R + 0.309f * R, 0),  // 左上
-//    new Vector3(-0.5878f * R, R - 0.809f * R, 0)  // 右下
-//};
-
 
         // 旋转并偏移所有点
         Vector3[] rotatedPoints = new Vector3[5];
@@ -492,17 +666,25 @@ public class Boss : Enemy
         float angle = 0;
         while (true)
         {
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             // 第一种颜色
             for (int j = 0; j < 5; j++)
-            {
+            { 
+                
                 for (int i = 0; i < bulletsPerRingStar; i++)
                 {
-                    GameObject go = Instantiate(danPre, spawnPos2, Quaternion.identity, this.danpreList.transform);
+                   
                     angle = i * bulletsPerRingStar;
                     spawnPos2 -= disF[j];
-                    dir = GetBulletFromPool(spawnPos2, ringBullets1, angle, this.pool);
-                    yield return new WaitForSeconds(interStar / bulletsPerRingStar);
+                    dir = GetBulletFromPool(spawnPos2, ringBullets1, angle, this.pool, 1);
+                    if(i % 6 == 0)
+                    {
+                        GameObject go = Instantiate(danPre, spawnPos2, Quaternion.identity, this.danpreList.transform);
+                        yield return new WaitForSeconds(interStar);
+                    }
+                   
                 }
+               
             }
 
             StartCoroutine(ActivateRing(ringBullets1, 6f, interStar * 5 * 5));
@@ -522,16 +704,109 @@ public class Boss : Enemy
             {
                 for (int i = 0; i < bulletsPerRingStar; i++)
                 {
-                    GameObject go = Instantiate(danPre2, spawnPosTemp, Quaternion.identity, this.danpreList.transform);
+                   
                     angle = i * bulletsPerRingStar;
                     spawnPosTemp -= disS[j];
 
                     dir = GetBulletFromPool(spawnPosTemp, ringBullets2, angle, this.pool2);
-                    yield return new WaitForSeconds(interStar / bulletsPerRingStar);
+                    if (i % 5 == 0)
+                    {
+                        GameObject go = Instantiate(danPre2, spawnPosTemp, Quaternion.identity, this.danpreList.transform);
+                        yield return new WaitForSeconds(interStar);
+                    }
                 }
+               
             }
 
             StartCoroutine(ActivateRing(ringBullets2, 6f, interStar * 5));
+            yield return new WaitForSeconds(6f);
+        }
+    }
+    IEnumerator DrawStarQuick(float interStarQuick)
+    {
+        float R = 4;
+        Vector3 spawnPos = this.transform.position + new Vector3(0, R, 0);
+        Vector3 spawnPos2 = this.transform.position + new Vector3(-4, R, 0);
+        Vector3 spawnPosTemp = spawnPos;
+        Vector3 dir;
+        // 计算旋转45度后的五角星边向量，并每个点向左偏移2f
+        float rotation = 45f * Mathf.Deg2Rad;
+        // 创建旋转矩阵函数
+        Vector3 RotatePoint(Vector3 point, float angle)
+        {
+            float cos = Mathf.Cos(angle);
+            float sin = Mathf.Sin(angle);
+            return new Vector3(
+                point.x * cos - point.y * sin,
+                point.x * sin + point.y * cos,
+                0
+            );
+        }
+
+        // 原始五角星顶点（未旋转）
+        Vector3[] originalPoints = {
+    new Vector3(0, R, 0),          // 顶部
+    new Vector3(0.5878f * R,  - 0.809f * R, 0), //左下
+    new Vector3(- 0.951f * R,  0.309f * R, 0), // 右上
+    new Vector3(0.951f * R,  0.309f * R, 0),  // 左上
+    new Vector3(-0.5878f * R,  - 0.809f * R, 0)  // 右下
+};
+        // 旋转并偏移所有点
+        Vector3[] rotatedPoints = new Vector3[5];
+        for (int i = 0; i < 5; i++)
+        {
+            rotatedPoints[i] = RotatePoint(originalPoints[i], rotation);
+        }
+
+        // 计算边向量
+        Vector3[] disF = new Vector3[5];
+        Vector3[] disS = new Vector3[5];
+        for (int i = 0; i < 5; i++)
+        {
+            int nextIndex = (i + 1) % 5;
+            disF[i] = (rotatedPoints[i] - rotatedPoints[nextIndex]) / bulletsPerRingStar;
+            disS[i] = (originalPoints[i] - originalPoints[nextIndex]) / bulletsPerRingStar;
+        }
+        float angle = 0;
+        while (true)
+        {
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
+            // 第一种颜色
+            for (int j = 0; j < 5; j++)
+            {
+                GameObject go = Instantiate(danPre, spawnPos2, Quaternion.identity, this.danpreList.transform);
+                for (int i = 0; i < bulletsPerRingStar; i++)
+                {
+
+                    angle = i * bulletsPerRingStar;
+                    spawnPos2 -= disF[j];
+                    dir = GetBulletFromPool(spawnPos2, ringBullets1, angle, this.pool);
+
+                }
+                yield return new WaitForSeconds(interStarQuick);
+            }
+
+            StartCoroutine(ActivateRing(ringBullets1, 6f, interStarQuick * 5 * 5));
+            yield return new WaitForSeconds(1f);
+            ColorBoomChange();
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
+            // 第二种颜色
+            for (int j = 0; j < 5; j++)
+            {
+                GameObject go = Instantiate(danPre2, spawnPosTemp, Quaternion.identity, this.danpreList.transform);
+                for (int i = 0; i < bulletsPerRingStar; i++)
+                {
+
+                    angle = i * bulletsPerRingStar;
+                    spawnPosTemp -= disS[j];
+
+                    dir = GetBulletFromPool(spawnPosTemp, ringBullets2, angle, this.pool2);
+
+                }
+                yield return new WaitForSeconds(interStarQuick);
+            }
+
+            StartCoroutine(ActivateRing(ringBullets2, 6f, interStarQuick * 5));
             yield return new WaitForSeconds(6f);
         }
     }
@@ -552,7 +827,7 @@ public class Boss : Enemy
         Box.GetComponent<Animator>().SetTrigger("Rotate");
         while (true)
         {
-            for (int j = 0; j < 150; j++)
+            for (int j = 0; j < 500; j++)
             {
                 for (int i = 0; i < 13; i++)
                 {
@@ -571,6 +846,10 @@ public class Boss : Enemy
 
                 }
                 yield return new WaitForSeconds(stepDelay);
+                if (j % 5 == 0)
+                {
+                    GameObject go = Instantiate(danPre, Box.transform.position, Quaternion.identity, this.danpreList.transform);
+                }
             }
             yield return new WaitForSeconds(stepDelay);
         }
@@ -579,7 +858,7 @@ public class Boss : Enemy
     {
         while (true)
         {
-            for (int j = 0; j < 50; j++)
+            for (int j = 0; j < 500; j++)
             {
                 for (int i = 0; i < 13; i++)
                 {
@@ -593,10 +872,20 @@ public class Boss : Enemy
                     ob.transform.position = this.transform.position;
                     bu.side = SIDE.BOSS; // 明确标记为Boss子弹，启用Element的dir移动
                     bu.dir = shootDirection;
-                    bu.speed = 6f;
+                    if (j % 3 == 0)
+                    {
+                        bu.speed = 12f;
+                    }
+                    else
+                        bu.speed = 5f;
                     ob.transform.rotation = Quaternion.Euler(0, 0, currentAngle);
 
                 }
+                if (j % 5 == 0)
+                {
+                    GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
+                }
+
                 yield return new WaitForSeconds(stepDelay);
             }
             yield return new WaitForSeconds(stepDelay);
@@ -633,7 +922,7 @@ public class Boss : Enemy
 
         for (int ring = 0; ring < ringCount; ring++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             // 随机偏移Boss位置
             Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
             Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
@@ -671,7 +960,7 @@ public class Boss : Enemy
 
         for (int ring = 0; ring < ringCount; ring++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             // 随机偏移Boss位置
             Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
             Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
@@ -704,7 +993,7 @@ public class Boss : Enemy
 
         for (int ring = 0; ring < ringCount; ring++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             // 随机偏移Boss位置
             Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
             Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
@@ -751,6 +1040,7 @@ public class Boss : Enemy
             if (bullet != null && bullet.gameObject.activeInHierarchy)
                 bullet.speed = finalSpeed - 2;
         }
+        ring.Clear();
     }
     IEnumerator ActivateRingOrigin(List<Element> ring, float finalSpeed, float delay)
     {
@@ -760,7 +1050,8 @@ public class Boss : Enemy
             if (bullet != null && bullet.gameObject.activeInHierarchy)
                 bullet.speed = finalSpeed;
         }
-        
+        ring.Clear();
+
     }
     //-------------------------------------------------------------------
 
@@ -789,6 +1080,12 @@ public class Boss : Enemy
         corNow = StartCoroutine(FireCircleCurveQuick(pershot, quickInter));
         yield return new WaitForSeconds(20f);
         if (corNow != null) StopCoroutine(corNow);
+        for (int i = 0; i < danpreList.transform.childCount; i++)
+        {
+            Transform child = danpreList.transform.GetChild(i);
+            GameObject go = child.gameObject;
+            Destroy(go);
+        }
     }
 
     // ===================== 攻击模式（）中为难度等级1，2，3递增 =====================
@@ -834,6 +1131,7 @@ public class Boss : Enemy
             yield return new WaitForSeconds(2f);
 
             GameObject danper = Instantiate(this.danPreBlueMove, goPos, Quaternion.identity, this.danpreList.transform);
+            danper.GetComponent<Animator>().SetTrigger("Move");
             if (this.danPre == this.danmuBluePre)
             {
                 this.danPre2 = this.danmuRedPre;
@@ -969,7 +1267,8 @@ public class Boss : Enemy
         Vector3 shootDirection = new Vector3(0, 0, 0);
         while(true)
         {
-            GameObject go = Instantiate(this.danPreRedL2RMove, this.transform.position - new Vector3(33, 0, 0), Quaternion.identity, this.danpreList.transform);
+            GameObject go = Instantiate(this.danPreRedL2RMove, this.transform.position - new Vector3(16, 0, 0), Quaternion.identity, this.danpreList.transform);
+            go.GetComponent<Animator>().SetTrigger("L2R");
             if (go != null)
             {
                 for (int ring = 0; ring < totalRound; ring++)
@@ -999,18 +1298,9 @@ public class Boss : Enemy
                 }
             }
             yield return new WaitForSeconds(2.5f);
-            GameObject danper = Instantiate(this.danPreRedR2LMove, this.transform.position - new Vector3(6, 0, 0), Quaternion.identity, this.danpreList.transform);
-            if (this.danPre == this.danmuBluePre)
-            {
-                this.danPre2 = this.danmuRedPre;
-                this.pool2 = this.bulletPool;
-            }
-            else
-            {
-                this.danPre2 = this.danmuBluePre;
-                this.pool2 = this.bulletPool2;
-            }
-
+            GameObject danper = Instantiate(this.danPreRedR2LMove, this.transform.position - new Vector3(5.5f, 0, 0), Quaternion.identity, this.danpreList.transform);
+            danper.GetComponent<Animator>().SetTrigger("R2L");
+            this.ColorBoomChange();
             if (danper != null)
             {
                 for (int ring = 0; ring < totalRound; ring++)
@@ -1045,24 +1335,24 @@ public class Boss : Enemy
     }
     //--------------利用动画Animation作为弹幕圈发射点， 可使用Animation扩展多个弹幕函数--------------------------------------
     //--------------（2）Fire520在屏幕绘画--------------------------------------
-    IEnumerator Fire520(int bulletsPerRing = 36, float ringInterval = 0.2f)
+    IEnumerator Fire520(int bulletsPerRing = 36, float ringInterval = 0.5f)
     {
         // 随机偏移Boss位置
         Vector2 offsetBoss = new Vector2(-8, 2);
         Vector3 spawnPos = this.transform.position + new Vector3(offsetBoss.x, offsetBoss.y, 0);
         Vector3 spawnPosTemp = spawnPos;
         Vector3 dir;
-        List<Element> ringBullets = new List<Element>();
-        
+
         // 先生成但不移动
         //float angleStep = 360f / bulletsPerRing;
         float dis = 2.0f / bulletsPerRing;
+        ColorBoomChange(); 
+        SoundManager.Instance.PlaySound(SoundDefine.Ele);
         //5 的简单绘制
         for (int j = 1; j < 6; j++)
         {
             for (int i = 0; i < bulletsPerRing; i++)
             {
-                GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
                 float angle = i * bulletsPerRing;
                 if (j == 1 || j == 5 )
                 {
@@ -1076,30 +1366,26 @@ public class Boss : Enemy
                 {
                     spawnPos.x += dis;
                 }
-                dir = GetBulletFromPool(spawnPos, ringBullets, angle, this.pool);
-                yield return new WaitForSeconds(ringInterval / bulletsPerRing);
-            }
-            yield return new WaitForSeconds(ringInterval - 0.15f);
-            
+                dir = GetBulletFromPool(spawnPos, ringBullets1, angle, this.pool2, -1);
+                if(i % 6 == 0)
+                {
+                    GameObject go = Instantiate(danPre2, spawnPos, Quaternion.identity, this.danpreList.transform);
+
+                    yield return new WaitForSeconds(ringInterval / bulletsPerRing);
+                }
+
+            } 
         }
+        
         spawnPos = spawnPosTemp + new Vector3(1,0,0);
-        if (this.danPre == this.danmuBluePre)
-        {
-            this.danPre2 = this.danmuRedPre;
-            this.pool2 = this.bulletPool;
-        }
-        else
-        {
-            this.danPre2 = this.danmuBluePre;
-            this.pool2 = this.bulletPool2;
-        }
+        ColorBoomChange();
+        SoundManager.Instance.PlaySound(SoundDefine.Ele);
         //2 的简单绘制
         for (int j = 1; j < 6; j++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
-            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
             for (int i = 0; i < bulletsPerRing; i++)
             {
+      
                 float angle = i * bulletsPerRing;
                 if (j == 1 || j == 5)
                 {
@@ -1113,20 +1399,26 @@ public class Boss : Enemy
                 {
                     spawnPos.x -= dis;
                 }
-                dir = GetBulletFromPool(spawnPos, ringBullets, angle, this.pool2);
-                yield return new WaitForSeconds(ringInterval / bulletsPerRing);
+                dir = GetBulletFromPool(spawnPos, ringBullets1, angle, this.pool2, -1);
+
+                if (i % 6 == 0)
+                {
+                    GameObject go = Instantiate(danPre2, spawnPos, Quaternion.identity, this.danpreList.transform);
+
+                    yield return new WaitForSeconds(ringInterval / bulletsPerRing);
+                }
             }
-            yield return new WaitForSeconds(0.04f);
 
         }
         spawnPos = spawnPosTemp + new Vector3(4, 0, 0);
+        ColorBoomChange(); 
+        SoundManager.Instance.PlaySound(SoundDefine.Ele);
         //0 的简单绘制
         for (int j = 1; j < 7; j++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
-            GameObject go = Instantiate(danPre, spawnPos, Quaternion.identity, this.danpreList.transform);
             for (int i = 0; i < bulletsPerRing; i++)
             {
+
                 float angle = i * bulletsPerRing;
                 if (j == 1)
                 {
@@ -1143,21 +1435,25 @@ public class Boss : Enemy
                 if (j == 5 || j == 6)
                     spawnPos.y += dis;
 
-                dir = GetBulletFromPool(spawnPos, ringBullets, angle, this.pool);
-                yield return new WaitForSeconds(ringInterval / bulletsPerRing);
+                dir = GetBulletFromPool(spawnPos, ringBullets1, angle, this.pool2, -1);
+
+                if (i % 6 == 0)
+                {
+                    GameObject go = Instantiate(danPre2, spawnPos, Quaternion.identity, this.danpreList.transform);
+                    yield return new WaitForSeconds(ringInterval / bulletsPerRing);
+                }
             }
-            yield return new WaitForSeconds(0.04f);
 
         }
         // 整圈延迟启动
-        StartCoroutine(ActivateRingOrigin(ringBullets, 5f, 0.5f));
+        StartCoroutine(ActivateRingOrigin(ringBullets1, 5f, 0.5f));
 
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(2f);
        
     }
     //--------------上述为Fire520在屏幕绘画--------------------------------------
 
-    private Vector3 GetBulletFromPool(Vector3 spawnPos, List<Element> ringBullets, float angle, Queue<GameObject> poolCur)
+    private Vector3 GetBulletFromPool(Vector3 spawnPos, List<Element> ringBullets, float angle, Queue<GameObject> poolCur, int x = 1, bool bounce = false)
     {
         Vector3 dir = Quaternion.Euler(0, 0, angle) * Vector3.right;
         GameObject ob;
@@ -1165,7 +1461,8 @@ public class Boss : Enemy
         GameUtil.BulletPoolGet(out ob, out bu, poolCur);
         ob.transform.position = spawnPos;
         bu.side = SIDE.BOSS;
-        bu.dir = dir;
+        bu.dir = x * dir;
+        bu.enableBounce = bounce;
         bu.speed = 0f;
         ob.transform.rotation = Quaternion.Euler(0, 0, angle);
 
@@ -1281,7 +1578,7 @@ public class Boss : Enemy
         float baseStep = 360f / bulletsWavePerShot;
         for (int ring = 0; ring < waveRings; ring++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danpre1, pos, Quaternion.identity, this.danpreList.transform);
             float t = Time.timeSinceLevelLoad;
             float waveOffset = Mathf.Sin(t * waveFrequency + ring) * waveAmplitudeDeg;
@@ -1312,7 +1609,7 @@ public class Boss : Enemy
         float baseStep = 360f / bulletsWavePerShot;
         for (int ring = 0; ring < waveRings; ring++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, pos, Quaternion.identity, this.danpreList.transform);
             float t = Time.timeSinceLevelLoad;
             float waveOffset = Mathf.Sin(t * waveFrequency + ring) * waveAmplitudeDeg;
@@ -1343,7 +1640,7 @@ public class Boss : Enemy
         float baseStep = 360f / bulletsWavePerShot;
         for (int ring = 0; ring < waveRings; ring++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
             float t = Time.timeSinceLevelLoad;
             float waveOffset = Mathf.Sin(t * waveFrequency + ring) * waveAmplitudeDeg;
@@ -1365,7 +1662,7 @@ public class Boss : Enemy
     {
         for (int w = 0; w < waves; w++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
             for (int i = 0; i < bulletsPerWave; i++)
             {
@@ -1408,7 +1705,7 @@ public class Boss : Enemy
         float baseAngle = 0f;
         while (true)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.Euler(0, 0, baseAngle), this.danpreList.transform);
             FireCircleOffset(ways, baseAngle);
             baseAngle += rotSpeedDeg * stepDelay;
@@ -1425,7 +1722,7 @@ public class Boss : Enemy
         //go.GetComponent<Animator>().enabled = false;
         while (true)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.Euler(0,0, baseAngle), this.danpreList.transform);
             // 发射一轮弹幕
             FireCircleOffset(ways, baseAngle);
@@ -1547,7 +1844,7 @@ public class Boss : Enemy
         float stateTimer = 0f;    // 控制状态切换（暂停计时）
         while (true)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             this.LianRota_timer11 += stepDelay;
             for (int j = 0; j < LianRota_j1; j++)
             {
@@ -1681,7 +1978,7 @@ public class Boss : Enemy
         float angleStep = 360f / fireScatter3BulletsPerShot;
         while (true)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
             for (int j = 0; j < fireScatter3TotalRound; j++)
             {
@@ -1704,7 +2001,7 @@ public class Boss : Enemy
         {
             for (int j = 0; j < fireScatterTotalRound; j++)
             {
-                SoundManager.Instance.PlaySound(SoundDefine.Biu);
+                SoundManager.Instance.PlaySound(SoundDefine.Ele);
                 GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
                 for (int i = 0; i < fireScatterBulletsPerShot; i++)
                 {
@@ -1724,7 +2021,7 @@ public class Boss : Enemy
         float angleStep = 360f / fireScatter4BulletsPerShot;
         while (true)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
             for (int j = 0; j < fireScatter4TotalRound; j++)
             {
@@ -1759,7 +2056,7 @@ public class Boss : Enemy
 
         for (int j = 0; j < 24; j++)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
             for (int i = 0; i < bulletsPerShot; i++)
             {
@@ -1784,7 +2081,7 @@ public class Boss : Enemy
     {
         while (true)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
             Destroy(go, 0.05f);
             if (playerTarget != null)
@@ -1878,8 +2175,48 @@ public class Boss : Enemy
             }
         }
     }
-        
-    
+    IEnumerator FireVerticalStreams2(GameObject topBox, int bulletsPerStream, float bulletInterval, int x)
+    {
+        float[] offsets = { -0.6f, 0.9f};
+        GameObject[] buls = new GameObject[offsets.Length];
+        Element[] elements = new Element[offsets.Length];
+        while (true)
+        {
+
+
+            // 发射该条弹幕的子弹
+            for (int j = 0; j < bulletsPerStream; j++)
+            {
+                // 创建特效
+                if (topBox != null)
+                {
+                    Vector3 topEffectPos = topBox.transform.position;
+                    if(j % 4  == 0)
+                    {
+                        GameObject topEffect = Instantiate(danPre, topEffectPos, Quaternion.identity, this.danpreList.transform);
+                    }
+                   
+                }
+                // 从上方box发射
+                if (topBox != null)
+                {
+                    Vector3 topBulletPos = topBox.transform.position;
+                    for (int i = 0; i < buls.Length; i++)
+                    {
+                        GameUtil.BulletPoolGet(out buls[i], out elements[i], this.pool);
+                        buls[i].transform.position = topBulletPos + new Vector3(0, offsets[i], 0);
+                        elements[i].side = SIDE.BOSS;
+                        elements[i].dir = x * topBox.transform.right; // 纵向向下
+                        elements[i].speed = 3f;
+                    }
+                }
+
+                yield return new WaitForSeconds(bulletInterval);
+            }
+        }
+    }
+
+
     IEnumerator FireScatter360Sub()
     {
         // 360度散射：将360度平均分配给所有子弹
@@ -1887,7 +2224,7 @@ public class Boss : Enemy
 
         while(true)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             GameObject go = Instantiate(danPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
             for (int i = 0; i < bulletsPerShotSub; i++)
             {
@@ -1985,7 +2322,7 @@ public class Boss : Enemy
 
         while (true)
         {
-            SoundManager.Instance.PlaySound(SoundDefine.Biu);
+            SoundManager.Instance.PlaySound(SoundDefine.Ele);
             // 随机偏移Boss位置
             Vector2 randomOffset = UnityEngine.Random.insideUnitCircle * spawnRadius;
             Vector3 spawnPos = this.transform.position + new Vector3(randomOffset.x, randomOffset.y, 0);
@@ -1999,6 +2336,7 @@ public class Boss : Enemy
                 ob.transform.position = spawnPos;
                 bu.side = SIDE.BOSS;
                 bu.dir = dirSingle;
+                bu.enableBounce = true;
                 bu.speed = 8f;
                 yield return new WaitForSeconds(singleBulletInterval);
             }
@@ -2043,6 +2381,25 @@ public class Boss : Enemy
         this.isInvincible = true;
         this.invincibleTime = 2f;
         ClearCoroutine();
+        if(ringBullets1.Count > 0)
+        {
+            foreach (var b in this.ringBullets1)
+            {
+                b.gameObject.SetActive(false);
+            }
+            this.ringBullets1.Clear();
+        }
+
+        if (ringBullets2.Count > 0)
+        {
+            foreach (var b in this.ringBullets2)
+            {
+                b.gameObject.SetActive(false);
+            }
+            this.ringBullets2.Clear();
+        }
+   
+        
         StopAllCoroutines();
         StartCoroutine(Attack());
         UIWorldElementManager.Instance.OnStartPhase();

@@ -49,5 +49,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HPMax: 3850
-  PhaseName: 11
-  HPColor: {r: 0.7491007, g: 0, b: 1, a: 1}
+  PhaseName: 14
+  HPColor: {r: 0.6377357, g: 0.3929717, b: 0.08543253, a: 1}
