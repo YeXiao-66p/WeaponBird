@@ -56,7 +56,7 @@ public class LeanTest : object {
 		if(tests==expected && testsFinished==false){
 			overview();
 		}else if(tests>expected){
-			Debug.Log(formatB("Too many tests for a final report!") + " set LeanTest.expected = "+tests);
+			Debug.Log(formatB("Too many BraidCoroutinesC for a final report!") + " set LeanTest.expected = "+tests);
 		}
 
 		if(timeoutStarted==false){

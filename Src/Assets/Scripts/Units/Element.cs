@@ -115,5 +115,115 @@ public class Element : MonoBehaviour
             this.enableBounce = false;
         }
     }
+    //IEnumerator Test()
+    //{
+    //    while (true)
+    //    {
+    //        for (int j = 1; j < 11; j++)
+    //        {
+    //            tests[j] = StartCoroutine(TenLianR(j));
+    //        }
+    //        yield return new WaitForSeconds(0.5f);
+    //        for (int j = 1; j < 11; j++)
+    //        {
+    //            tests2[j] = StartCoroutine(TenLianL(j));
+    //        }
 
+    //        yield return new WaitForSeconds(100f);
+    //    }
+    //}
+
+    //IEnumerator TenLianR(int j)
+    //{
+    //    float angle1;
+    //    float angle;
+    //    while (true)
+    //    {
+    //        ColorBoomChange();
+    //        angle1 = j * (360f / 10);
+
+    //        for (int i = 0; i < 18; i++)
+    //        {
+    //            GameObject go = Instantiate(this.danmuRedPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
+    //            angle = i * (135.0f / 18) + angle1;
+    //            Vector3 shootDirection = Quaternion.Euler(0, 0, angle) * Vector3.right;
+
+    //            GameObject ob;
+    //            Element bu;
+    //            GameUtil.BulletPoolGet(out ob, out bu, this.bulletPool);
+
+    //            ob.transform.position = this.transform.position;
+    //            bu.side = SIDE.BOSS;
+    //            bu.dir = shootDirection;
+
+    //            // 修改速度曲线，实现甩辫子效果
+    //            if (i < 6)
+    //            {
+    //                // 前6个子弹：速度从0.5逐渐增加到4（加速）
+    //                bu.speed = Mathf.Lerp(3f, 3.5f, i / 6f);
+    //            }
+    //            else if (i < 12)
+    //            {
+    //                // 中间6个子弹：保持高速4
+    //                bu.speed = 4f;
+    //            }
+    //            else
+    //            {
+    //                // 后6个子弹：速度从4逐渐减小到2（减速）
+    //                bu.speed = Mathf.Lerp(4f, 2f, (i - 12) / 6f);
+    //            }
+
+    //            ob.transform.rotation = Quaternion.Euler(0, 0, angle);
+    //            yield return new WaitForSeconds(0.06f);
+    //        }
+    //        yield return new WaitForSeconds(0.6f);
+    //    }
+    //}
+
+    //IEnumerator TenLianL(int j)
+    //{
+    //    float angle1;
+    //    float angle;
+    //    while (true)
+    //    {
+    //        ColorBoomChange();
+    //        angle1 = j * (360f / 10);
+
+    //        for (int i = 0; i < 18; i++)
+    //        {
+    //            GameObject go = Instantiate(this.danmuBluePre, this.transform.position, Quaternion.identity, this.danpreList.transform);
+    //            angle = angle1 - i * (135.0f / 18);
+    //            Vector3 shootDirection = Quaternion.Euler(0, 0, angle) * Vector3.right;
+
+    //            GameObject ob;
+    //            Element bu;
+    //            GameUtil.BulletPoolGet(out ob, out bu, this.bulletPool2);
+
+    //            ob.transform.position = this.transform.position;
+    //            bu.side = SIDE.BOSS;
+    //            bu.dir = shootDirection;
+
+    //            // 使用相同的速度曲线，实现对称的甩辫子效果
+    //            if (i < 6)
+    //            {
+    //                // 前6个子弹：速度从0.5逐渐增加到4（加速）
+    //                bu.speed = Mathf.Lerp(3f, 3.5f, i / 6f);
+    //            }
+    //            else if (i < 12)
+    //            {
+    //                // 中间6个子弹：保持高速4
+    //                bu.speed = 4f;
+    //            }
+    //            else
+    //            {
+    //                // 后6个子弹：速度从4逐渐减小到2（减速）
+    //                bu.speed = Mathf.Lerp(4f, 2f, (i - 12) / 6f);
+    //            }
+
+    //            ob.transform.rotation = Quaternion.Euler(0, 0, angle);
+    //            yield return new WaitForSeconds(0.06f);
+    //        }
+    //        yield return new WaitForSeconds(0.6f);
+    //    }
+    //}
 }

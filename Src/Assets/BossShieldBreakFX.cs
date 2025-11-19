@@ -59,7 +59,7 @@ public class BossShieldBreakFX : MonoBehaviour
     }
 
     // 方便测试
-    [ContextMenu("Test Effect")]
+    [ContextMenu("BraidBoom Effect")]
     void TestEffect()
     {
         Instantiate(this, transform.position, Quaternion.identity);

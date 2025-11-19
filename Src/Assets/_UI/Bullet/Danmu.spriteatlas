@@ -23,12 +23,12 @@ SpriteAtlas:
     platformSettings:
     - serializedVersion: 3
       m_BuildTarget: DefaultTexturePlatform
-      m_MaxTextureSize: 1024
+      m_MaxTextureSize: 512
       m_ResizeAlgorithm: 0
       m_TextureFormat: -1
       m_TextureCompression: 3
-      m_CompressionQuality: 50
-      m_CrunchedCompression: 0
+      m_CompressionQuality: 0
+      m_CrunchedCompression: 1
       m_AllowsAlphaSplitting: 0
       m_Overridden: 0
       m_IgnorePlatformSupport: 0
@@ -46,15 +46,15 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 21300000, guid: 89ba921642003484abe02c7ef09ff515, type: 3}
-    - {fileID: 21300000, guid: 1e4ad4bbc16d54541abd1eea6083bc6a, type: 3}
+    - {fileID: 21300000, guid: 3cae3e56e9b3ced43b3847300a1c8903, type: 3}
     - {fileID: 21300000, guid: 9cb75adf347f6d94e9252eeffc7f0b2e, type: 3}
     - {fileID: 21300000, guid: 789a7414a405c534cbb2bc10a5016faf, type: 3}
-    - {fileID: 21300000, guid: 377c8ab12a9e40a4a9d83ab2a5f4bcf8, type: 3}
+    - {fileID: 21300000, guid: b0277d760a8ca624fa0ba3ade0bc5c6b, type: 3}
     - {fileID: 21300000, guid: b924e5a096d6bb449ac5b93dbb3700cd, type: 3}
     - {fileID: 21300000, guid: e78b42d43c4f1584fb6f2c9a64fe11b5, type: 3}
     - {fileID: 21300000, guid: 98b90a825395b4645b5f25c51d59de2f, type: 3}
     - {fileID: 21300000, guid: 227ec3bca19fb8e4c90a9ae631efb287, type: 3}
-    - {fileID: 21300000, guid: b99718e0551e4ed41ad651ca61ef7636, type: 3}
+    - {fileID: 21300000, guid: c7ade80562731ff408be2a6d519a174b, type: 3}
     - {fileID: 21300000, guid: 2478e37e5c612ac48a4b7c34759d1fa1, type: 3}
     - {fileID: 21300000, guid: 459f6496751cc9c4787e71da146515a1, type: 3}
     - {fileID: 21300000, guid: 6ca0c9eb54517554ba82c52aa80733e1, type: 3}
@@ -71,17 +71,17 @@ SpriteAtlas:
     packedSpriteRenderDataKeys:
     - b924e5a096d6bb449ac5b93dbb3700cd: 21300000
     - 52a696d0bde81ab48bb1f98d823d399a: 21300000
-    - b99718e0551e4ed41ad651ca61ef7636: 21300000
-    - 377c8ab12a9e40a4a9d83ab2a5f4bcf8: 21300000
     - 8b594172a8b4c5b47b932adf02d10681: 21300000
     - 98b90a825395b4645b5f25c51d59de2f: 21300000
     - 789a7414a405c534cbb2bc10a5016faf: 21300000
     - e78b42d43c4f1584fb6f2c9a64fe11b5: 21300000
+    - c7ade80562731ff408be2a6d519a174b: 21300000
     - f5372e75911e7044486d365d72512ccf: 21300000
     - 0dee1706d3e840c428cbde7487de9f98: 21300000
     - 89ba921642003484abe02c7ef09ff515: 21300000
+    - 3cae3e56e9b3ced43b3847300a1c8903: 21300000
+    - b0277d760a8ca624fa0ba3ade0bc5c6b: 21300000
     - 459f6496751cc9c4787e71da146515a1: 21300000
-    - 1e4ad4bbc16d54541abd1eea6083bc6a: 21300000
     - 6ca0c9eb54517554ba82c52aa80733e1: 21300000
     - 78246d2cee7f20743aa3d203e1c950da: 21300000
     - 227ec3bca19fb8e4c90a9ae631efb287: 21300000
@@ -93,17 +93,17 @@ SpriteAtlas:
   m_PackedSprites:
   - {fileID: 21300000, guid: b924e5a096d6bb449ac5b93dbb3700cd, type: 3}
   - {fileID: 21300000, guid: 52a696d0bde81ab48bb1f98d823d399a, type: 3}
-  - {fileID: 21300000, guid: b99718e0551e4ed41ad651ca61ef7636, type: 3}
-  - {fileID: 21300000, guid: 377c8ab12a9e40a4a9d83ab2a5f4bcf8, type: 3}
   - {fileID: 21300000, guid: 8b594172a8b4c5b47b932adf02d10681, type: 3}
   - {fileID: 21300000, guid: 98b90a825395b4645b5f25c51d59de2f, type: 3}
   - {fileID: 21300000, guid: 789a7414a405c534cbb2bc10a5016faf, type: 3}
   - {fileID: 21300000, guid: e78b42d43c4f1584fb6f2c9a64fe11b5, type: 3}
+  - {fileID: 21300000, guid: c7ade80562731ff408be2a6d519a174b, type: 3}
   - {fileID: 21300000, guid: f5372e75911e7044486d365d72512ccf, type: 3}
   - {fileID: 21300000, guid: 0dee1706d3e840c428cbde7487de9f98, type: 3}
   - {fileID: 21300000, guid: 89ba921642003484abe02c7ef09ff515, type: 3}
+  - {fileID: 21300000, guid: 3cae3e56e9b3ced43b3847300a1c8903, type: 3}
+  - {fileID: 21300000, guid: b0277d760a8ca624fa0ba3ade0bc5c6b, type: 3}
   - {fileID: 21300000, guid: 459f6496751cc9c4787e71da146515a1, type: 3}
-  - {fileID: 21300000, guid: 1e4ad4bbc16d54541abd1eea6083bc6a, type: 3}
   - {fileID: 21300000, guid: 6ca0c9eb54517554ba82c52aa80733e1, type: 3}
   - {fileID: 21300000, guid: 78246d2cee7f20743aa3d203e1c950da, type: 3}
   - {fileID: 21300000, guid: 227ec3bca19fb8e4c90a9ae631efb287, type: 3}
@@ -114,17 +114,17 @@ SpriteAtlas:
   m_PackedSpriteNamesToIndex:
   - BossBul_CirclePink
   - BossBul_CardRedPro
-  - BossBul_CardPinkPro
-  - BoomStar
   - BossBul_BlankCircleRed
   - BossBoom_boomBlueS
   - BossBul_BlankCirclePink
   - BossBoom_boomRedS
+  - BossBul_CardPinkPro
   - maskRect
   - BossBul_BlankCircleBlue
   - Player_Star
-  - Player_Bullet
   - Pet_Star
+  - BoomStar
+  - Player_Bullet
   - Boss_PinkBag
   - maskRound
   - BossBul_CardBluePro
