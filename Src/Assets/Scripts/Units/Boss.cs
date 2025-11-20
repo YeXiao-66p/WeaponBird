@@ -318,8 +318,12 @@ public class Boss : Enemy
             //yield return DrawStar(this.interStar);
             //yield return new WaitForSeconds(10f);
             //yield return FinalFantasyBoom();
+            //yield return GenerateComplexOscillationCurve();
+            //yield return GenerateMultiLayerOscillationCurve();
+            //yield return GenerateHalfDynamicOscillationCurve();
+            yield return GenerateMultiLayerOscillationCurve2();
             //yield return BraidBoom();
-            yield return StartCoroutine(GenerateRotatingBall());
+            //yield return DrawHeartOutline3Solo(this.interHeart);
             yield return new WaitForSeconds(200f);
             continue;
 
@@ -481,7 +485,319 @@ public class Boss : Enemy
             yield return null;
         }
     }
+    IEnumerator GenerateHalfDynamicOscillationCurve()
+    {
+        Vector3 center = this.transform.position;
+        int totalPoints = 1500; // 总点数
+        float duration = 0.04f; // 完成一圈的时间
+        float time = 0f;
 
+        while (true)
+        {
+            ColorBoomChange();
+            time += Time.deltaTime;
+
+            // 动态参数
+            float baseN = 28f;
+            float dynamicN = baseN + Mathf.Sin(time * 0.5f) * 4f;
+            float amplitude1 = 4f + Mathf.Sin(time * 0.3f) * 1f;
+            float amplitude2 = 3f + Mathf.Cos(time * 0.4f) * 0.5f;
+
+            for (int i = 0; i < totalPoints; i++)
+            {
+                float t = i * (1f * Mathf.PI / totalPoints) + time * 0.5f;
+
+                // 动态复合振荡曲线
+                float x = amplitude1 * Mathf.Cos(t) - amplitude2 * Mathf.Cos(dynamicN * t);
+                float y = amplitude1 * Mathf.Sin(t) - amplitude2 * Mathf.Sin(dynamicN * t);
+
+                Vector3 spawnPos = center + new Vector3(x, y, 0);
+
+                GameObject bullet;
+                Element element;
+                GameUtil.BulletPoolGet(out bullet, out element, this.pool2);
+
+                bullet.transform.position = spawnPos;
+                element.side = SIDE.BOSS;
+
+                // 计算动态方向
+                Vector3 direction = (spawnPos - center).normalized;
+                element.dir = direction;
+                element.speed = 0f;
+                ringBullets1.Add(element);
+                // 添加特效
+                if (i % 2 == 0)
+                {
+                    GameObject effect = Instantiate(danPre2, spawnPos, Quaternion.identity, this.danpreList.transform);
+                    yield return new WaitForSeconds(duration / totalPoints);
+                }
+            }
+            StartCoroutine(ActivateRingOrigin(ringBullets1, 6f, 1f));
+            yield return new WaitForSeconds(2f);
+        }     
+    }
+    IEnumerator GenerateMultiLayerOscillationCurve()
+    {
+        Vector3 center = this.transform.position;
+        int layers = 3;
+        int pointsPerLayer = 550;
+        float[] nValues = { 28f, 14f, 7f }; // 不同层的n值
+        float duration = 0.1f; // 完成一圈的时间
+        while (true)
+        {
+
+            for (int layer = 0; layer < layers; layer++)
+            {
+                float n = nValues[layer];
+                float phase = layer * (Mathf.PI / 3f); // 相位偏移
+                if(layer != 0)
+                {
+                    ColorBoomChange();
+                }
+                for (int i = 0; i < pointsPerLayer; i++)
+                {
+                    float t = i * (2f * Mathf.PI / pointsPerLayer) + phase;
+
+                    // 计算复合振荡曲线上的点
+                    float x = 4f * Mathf.Cos(t) - 3f * Mathf.Cos(n * t);
+                    float y = 4f * Mathf.Sin(t) - 3f * Mathf.Sin(n * t);
+
+                    Vector3 spawnPos = center + new Vector3(x, y, 0);
+
+                    GameObject bullet;
+                    Element element;
+                    GameUtil.BulletPoolGet(out bullet, out element, this.pool2);
+
+                    bullet.transform.position = spawnPos;
+                    element.side = SIDE.BOSS;
+
+                    // 向外发射
+                    Vector3 direction = (spawnPos - center).normalized;
+                    element.dir = direction;
+                    element.speed = 0f;
+                    ringBullets1.Add(element);
+                    // 添加特效
+                    if (i % 2 == 0)
+                    {
+                        GameObject effect = Instantiate(danPre2, spawnPos, Quaternion.identity, this.danpreList.transform);
+                        yield return new WaitForSeconds(duration / pointsPerLayer);
+                    }
+                }
+            }
+            StartCoroutine(ActivateRingOrigin(ringBullets1, 6f, 1f));
+            yield return new WaitForSeconds(4f);
+        }
+    }
+    IEnumerator GenerateComplexOscillationCurve()
+    {
+        Vector3 center = this.transform.position;
+        int totalPoints = 1500; // 总点数
+        float n = 28f; // 振荡参数
+        float duration = 0.1f; // 完成一圈的时间
+
+        while (true)
+        {
+            ColorBoomChange();
+            for (int i = 0; i < totalPoints; i++)
+            {
+                float t = i * (2f * Mathf.PI / totalPoints);
+
+                // 计算复合振荡曲线上的点
+                // x = 4 * cos(t) - 3 * cos(n * t)
+                // y = 4 * sin(t) - 3 * sin(n * t)
+                float x = 4f * Mathf.Cos(t) - 3f * Mathf.Cos(n * t);
+                float y = 4f * Mathf.Sin(t) - 3f * Mathf.Sin(n * t);
+
+                Vector3 spawnPos = center + new Vector3(x, y, 0);
+
+                // 计算切线方向（子弹发射方向）
+                float tangentAngle = CalculateOscillationTangent(t, n);
+
+                // 生成子弹
+                GameObject bullet;
+                Element element;
+                GameUtil.BulletPoolGet(out bullet, out element, this.pool2);
+
+                bullet.transform.position = spawnPos;
+                element.side = SIDE.BOSS;
+                element.dir = Quaternion.Euler(0, 0, tangentAngle) * Vector3.right;
+                element.speed = 0f;
+                ringBullets1.Add(element);
+                // 添加特效
+                if (i % 2 == 0)
+                {
+                    GameObject effect = Instantiate(danPre2, spawnPos, Quaternion.identity, this.danpreList.transform);
+                    yield return new WaitForSeconds(duration / totalPoints);
+                }
+            }
+            StartCoroutine(ActivateRingOrigin(ringBullets1, 6f, 1f));
+            yield return new WaitForSeconds(3f);
+        }
+    }
+    IEnumerator GenerateFlowerCurve()
+    {
+        Vector3 center = this.transform.position;
+        int totalPoints = 1500; // 总点数
+        float n = 7f; // 振荡参数
+        float duration = 0.1f; // 完成一圈的时间
+
+        while (true)
+        {
+            ColorBoomChange();
+            for (int i = 0; i < totalPoints; i++)
+            {
+                float t = i * (2f * Mathf.PI / totalPoints);
+
+                // 计算复合振荡曲线上的点
+                // x = 4 * cos(t) - 3 * cos(n * t)
+                // y = 4 * sin(t) - 3 * sin(n * t)
+                float x = 4f * Mathf.Cos(t) - 3f * Mathf.Cos(n * t);
+                float y = 4f * Mathf.Sin(t) - 3f * Mathf.Sin(n * t);
+
+                Vector3 spawnPos = center + new Vector3(x, y, 0);
+
+                // 计算切线方向（子弹发射方向）
+                float tangentAngle = CalculateOscillationTangent(t, n);
+
+                // 生成子弹
+                GameObject bullet;
+                Element element;
+                GameUtil.BulletPoolGet(out bullet, out element, this.pool2);
+
+                bullet.transform.position = spawnPos;
+                element.side = SIDE.BOSS;
+                element.dir = Quaternion.Euler(0, 0, tangentAngle) * Vector3.right;
+                element.speed = 0f;
+                ringBullets1.Add(element);
+                // 添加特效
+                if (i % 2 == 0)
+                {
+                    GameObject effect = Instantiate(danPre2, spawnPos, Quaternion.identity, this.danpreList.transform);
+                    yield return new WaitForSeconds(duration / totalPoints);
+                }
+            }
+            StartCoroutine(ActivateRingOrigin(ringBullets1, 6f, 1f));
+            yield return new WaitForSeconds(3f);
+        }
+    }
+    IEnumerator GenerateMultiLayerOscillationCurve2()
+    {
+        Vector3 center = this.transform.position;
+  
+
+        //int pointsPerLayer = 300;
+        //float[] nValues = { 1f, 2f, 3f, 4f}; // 1
+        //float[] nValues = { 1f, 2f, 3f, 5f }; // 2
+        float interCur = 4f;
+
+        float[] nValues = { 8f, 9f, 10f, 11f, 12f, 13f, 14f };
+        int pointsPerLayer = 550;
+        int layers = nValues.Length;
+        float duration = 0.1f; // 完成一圈的时间       
+        //float[] nValues = { 6f }; // 五瓣花
+        //float interCur = 2f;
+        while (true)
+        {
+
+            for (int layer = 0; layer < layers; layer++)
+            {
+                float n = nValues[layer];
+                float phase = layer * (Mathf.PI / 3f); // 相位偏移
+                if (layer % 2 == 0)
+                {
+                    ColorBoomChange();
+                }
+                for (int i = 0; i < pointsPerLayer; i++)
+                {
+                    float t = i * (2f * Mathf.PI / pointsPerLayer) + phase;
+
+                    // 计算复合振荡曲线上的点
+                    float x = 4f * Mathf.Cos(t) - 3f * Mathf.Cos(n * t);
+                    float y = 4f * Mathf.Sin(t) - 3f * Mathf.Sin(n * t);
+
+                    Vector3 spawnPos = center + new Vector3(x, y, 0);
+
+                    GameObject bullet;
+                    Element element;
+                    GameUtil.BulletPoolGet(out bullet, out element, this.pool2);
+
+                    bullet.transform.position = spawnPos;
+                    element.side = SIDE.BOSS;
+
+                    // 向外发射
+                    Vector3 direction = (spawnPos - center).normalized;
+                    element.dir = direction;
+                    element.speed = 0f;
+                    ringBullets1.Add(element);
+                    // 添加特效
+                    if (i % 2 == 0)
+                    {
+                        GameObject effect = Instantiate(danPre2, spawnPos, Quaternion.identity, this.danpreList.transform);
+                        yield return new WaitForSeconds(duration / pointsPerLayer);
+                    }
+                }
+                StartCoroutine(ActivateRingOrigin(ringBullets1, 6f, 1f));
+                yield return new WaitForSeconds(interCur);
+                if (nValues[layer] == 6)
+                {
+                    ColorBoomChange();
+                    yield return new WaitForSeconds(interCur - 1);
+                    for (int i = pointsPerLayer - 1; i >= 0; i--)
+                    {
+                        float t = i * (2f * Mathf.PI / pointsPerLayer) + phase;
+
+                        // 计算复合振荡曲线上的点
+                        float x = 4f * Mathf.Cos(t) - 3f * Mathf.Cos(n * t);
+                        float y = 4f * Mathf.Sin(t) - 3f * Mathf.Sin(n * t);
+
+                        Vector3 spawnPos = center + new Vector3(x, y, 0);
+
+                        GameObject bullet;
+                        Element element;
+                        GameUtil.BulletPoolGet(out bullet, out element, this.pool2);
+
+                        bullet.transform.position = spawnPos;
+                        element.side = SIDE.BOSS;
+
+                        // 向外发射
+                        Vector3 direction = (spawnPos - center).normalized;
+                        element.dir = direction;
+                        element.speed = 0f;
+                        ringBullets1.Add(element);
+                        // 添加特效
+                        if (i % 2 == 0)
+                        {
+                            GameObject effect = Instantiate(danPre2, spawnPos, Quaternion.identity, this.danpreList.transform);
+                            yield return new WaitForSeconds(duration / pointsPerLayer);
+                        }
+                    }
+                    StartCoroutine(ActivateRingOrigin(ringBullets1, 6f, 1f));
+                    yield return new WaitForSeconds(interCur);
+                }
+                
+            }
+                
+        }
+    }
+    // 计算复合振荡曲线的切线角度
+    float CalculateOscillationTangent(float t, float n)
+    {
+        // 方程: 
+        // x = 4 * cos(t) - 3 * cos(n * t)
+        // y = 4 * sin(t) - 3 * sin(n * t)
+
+        // 导数:
+        // dx/dt = -4 * sin(t) + 3 * n * sin(n * t)
+        // dy/dt = 4 * cos(t) - 3 * n * cos(n * t)
+
+        float dx_dt = -4f * Mathf.Sin(t) + 3f * n * Mathf.Sin(n * t);
+        float dy_dt = 4f * Mathf.Cos(t) - 3f * n * Mathf.Cos(n * t);
+
+        // 切线角度
+        float tangentAngle = Mathf.Atan2(dy_dt, dx_dt) * Mathf.Rad2Deg;
+
+        return tangentAngle;
+    }
     // 在屏幕中心生成一个旋转的倾斜球体，倾斜方向为侧前方
     IEnumerator GenerateRotatingBall()
     {
@@ -618,7 +934,7 @@ public class Boss : Enemy
             for (int i = 0; i < bullletsPerBraid; i++)
             {
                 GameObject go = Instantiate(this.danmuRedPre, this.transform.position, Quaternion.identity, this.danpreList.transform);
-                angle = i * (135.0f / bullletsPerBraid) + angle1;
+                angle = i * (300.0f / bullletsPerBraid) + angle1;
                 Vector3 shootDirection = Quaternion.Euler(0, 0, angle) * Vector3.right;
 
                 GameObject ob;
@@ -660,7 +976,7 @@ public class Boss : Enemy
             for (int i = 0; i < bullletsPerBraid; i++)
             {
                 GameObject go = Instantiate(this.danmuBluePre, this.transform.position, Quaternion.identity, this.danpreList.transform);
-                angle = angle1 - i * (135.0f / bullletsPerBraid);
+                angle = angle1 - i * (300.0f / bullletsPerBraid);
                 Vector3 shootDirection = Quaternion.Euler(0, 0, angle) * Vector3.right;
 
                 GameObject ob;
@@ -689,6 +1005,7 @@ public class Boss : Enemy
             yield return new WaitForSeconds(0.8f);
         }
     }
+
     //--------------上述为发射多条长辫子--------------------------------------
 
     //--------------爱心发射--------------------------------------
@@ -842,6 +1159,7 @@ public class Boss : Enemy
             {
                 ani = go.GetComponent<Animator>();
                 ani.SetTrigger("RotateN");
+
             }
             if (index == 1)
             {
@@ -887,7 +1205,7 @@ public class Boss : Enemy
 
             yield return new WaitForSeconds(interFantasy * 1600);
             Destroy(go);
-        }           
+        }
     }
     //--------------上述为最终幻想--------------------------------------
 
@@ -2411,41 +2729,42 @@ public class Boss : Enemy
     {
         while (true)
         {
+            ColorBoomChange();
             float angle = (360f / bulletsPerStream);
             // 发射该条弹幕的子弹
-            for (int j = 0; j < 16; j++)
+            if (topBox != null) 
             {
-      
-                // 创建特效
-                if (topBox != null)
+                for (int j = 0; j < 16; j++)
                 {
-                    Vector3 topEffectPos = topBox.transform.position;
-                    if (j % 4 == 0)
-                    {
-                        GameObject topEffect = Instantiate(danPre2, topEffectPos, Quaternion.identity, this.danpreList.transform);
-                    }
-
-                }
-                for(int k = 0; k < bulletsPerStream; k++)
-                {
-                    // 从上方box发射
+                    // 创建特效
                     if (topBox != null)
                     {
-                        float angleCur = k * angle;
-                        Vector3 dir = Quaternion.Euler(0, 0, angleCur) * Vector3.right;
-                        GameObject ob;
-                        Element bu;
-                        GameUtil.BulletPoolGet(out ob, out bu, this.pool2);
-                        ob.transform.position = topBox.transform.position;
-                        bu.side = SIDE.BOSS;
-                        bu.dir = dir;
-                        bu.speed = 3f;
-                        ob.transform.rotation = Quaternion.Euler(0, 0, angleCur);
+                        Vector3 topEffectPos = topBox.transform.position;
+                        GameObject topEffect = Instantiate(danPre2, topBox.transform.position, Quaternion.identity, this.danpreList.transform);
                     }
-                }
+                    for (int k = 0; k < bulletsPerStream; k++)
+                    {
+                        // 从上方box发射
+                        if (topBox != null)
+                        {
+                            float angleCur = k * angle;
+                            Vector3 dir = Quaternion.Euler(0, 0, angleCur) * Vector3.right;
+                            GameObject ob;
+                            Element bu;
+                            GameUtil.BulletPoolGet(out ob, out bu, this.pool2);
+                            ob.transform.position = topBox.transform.position;
+                            bu.side = SIDE.BOSS;
+                            bu.dir = dir;
+                            bu.speed = 3f;
+                            ob.transform.rotation = Quaternion.Euler(0, 0, angleCur);
 
-                yield return new WaitForSeconds(bulletInterval);
+                        }
+                    }
+
+                    yield return new WaitForSeconds(bulletInterval);
+                }
             }
+            
         }
     }
     //------------------------------上述为8条横向弹幕-------------------------------
