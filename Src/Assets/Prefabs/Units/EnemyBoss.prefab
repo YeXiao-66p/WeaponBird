@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &684376896783374573
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6909641138140008389}
+  m_Layer: 0
+  m_Name: BossBulletPool3Big
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6909641138140008389
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684376896783374573}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3626826667898133236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2010982664992480484
 GameObject:
   m_ObjectHideFlags: 0
@@ -256,8 +287,11 @@ Transform:
   m_Children:
   - {fileID: 375318121835652475}
   - {fileID: 4296691753568265067}
+  - {fileID: 8616063907441497095}
   - {fileID: 8629031929449191360}
+  - {fileID: 5084285213517904996}
   - {fileID: 408235555546451486}
+  - {fileID: 6909641138140008389}
   - {fileID: 535926865081856014}
   - {fileID: 1847631169379252506}
   m_Father: {fileID: 0}
@@ -369,7 +403,7 @@ MonoBehaviour:
   HP: 3000
   HPMax: 3000
   inputMode: 0
-  maxBullet: 2250
+  maxBullet: 3000
   power: 1
   isFly: 0
   enemyType: 2
@@ -397,6 +431,12 @@ MonoBehaviour:
   danPreRedR2LMove: {fileID: 4436974693078232789, guid: 1957996ef1acd594b9b0f2d723ddf7af, type: 3}
   danPreFireBox: {fileID: 4433416688498353046, guid: da286ecc9d93a174496e3e5e5e9d7b04, type: 3}
   danPrePinkFireBox: {fileID: 4433416688498353046, guid: e0018f8d7f36fc047a6d609dcfbad0ed, type: 3}
+  bulletList1B: {fileID: 6629291442447504114}
+  bulletTemplate1B: {fileID: 8757443483845766138, guid: cf211b4f3c8754046892b2d9f4a22b16, type: 3}
+  bulletList2B: {fileID: 6936721425609187841}
+  bulletTemplate2B: {fileID: 8757443483845766138, guid: 6d1e486daf269a74fba92fa610ab1176, type: 3}
+  bulletList3B: {fileID: 684376896783374573}
+  bulletTemplate3B: {fileID: 8757443483845766138, guid: 3653925f444af504b83863a82144c475, type: 3}
   bulletList2: {fileID: 6845660928428651231}
   bulletTemplate2: {fileID: 8757443483845766138, guid: 3a71231803d656b4abde043eec579249, type: 3}
   bulletList3: {fileID: 4633973688100772944}
@@ -419,25 +459,46 @@ MonoBehaviour:
   - {fileID: 9071573834150409404, guid: 1bdc86acd4d2e654f862f7e4247b698a, type: 3}
   - {fileID: 9071573834150409404, guid: afe134191a9e52e46afae0223f464fbb, type: 3}
   - {fileID: 9071573834150409404, guid: db82ec4b6c62d354f815dfdd6369454c, type: 3}
+  - {fileID: 9071573834150409404, guid: 75e9b2304d58d154b892ebb5bef9aee2, type: 3}
+  - {fileID: 9071573834150409404, guid: e5a6c94a7c8133a46a7e0adc8984e8ba, type: 3}
+  - {fileID: 9071573834150409404, guid: f2fd78cd4c2ae424f8e2d0c3aa06c5cf, type: 3}
+  - {fileID: 9071573834150409404, guid: 5c436dd8cfc487b43a6e91a8e9033fef, type: 3}
+  - {fileID: 9071573834150409404, guid: 365955a18593f4d4fb8ae19f0a93a1c3, type: 3}
+  - {fileID: 9071573834150409404, guid: f0d553e5d19740941ad12e9de1b974e9, type: 3}
+  - {fileID: 9071573834150409404, guid: 45ee5a3841d7fc849abd89e2b28c2d4e, type: 3}
+  - {fileID: 9071573834150409404, guid: ee1bfd91ac0157444b42b2f8102b16fa, type: 3}
+  - {fileID: 9071573834150409404, guid: 34d75946b1ce9fc47b7a220e9a504e39, type: 3}
+  - {fileID: 9071573834150409404, guid: 89687204dc05a6c42828b999a5611e6e, type: 3}
+  - {fileID: 9071573834150409404, guid: f32458e1a48d9f448bf31962d805b166, type: 3}
   currentPhaseIndex: 0
   isInvincible: 0
   invincibleTime: 0
   invincibleDuration: 4
-  interTes: 0.04
+  outlinePoints: 120
+  interHeart: 0.04
+  LianToPlayerInter: 0.02
+  maxFinalFantasyBulletCircle: 36
+  maxFinalFantasyBullet: 3000
+  interFantasy: 1
+  interSector: 0.04
   interStarAni: 0.1
-  drawInterAni: 4
+  drawInterAni: 5
   bulletsPerRingStarAni: 350
   interStar: 0.008
-  interStarQuick: 0.005
+  interStarQuick: 0.01
   bulletsPerRingStar: 135
   consistentBulletInterval: 0.35
   consistentInterval: 1
   maxRoundFullScreen: 300
   spedFullScreen: 3
+  bulletsPerRing520: 36
+  ringInterval520: 0.8
+  quickCurAniInter: 0.1
+  pershotQuickCurAni: 36
   bulletPerRoundSingle: 36
   intervalSingle: 0.2
   fireCircleNewbulletsPerRing: 30
-  totalRound: 30
+  totalRound: 48
   fireCircleNewringInterval: 0.1
   bulletcnt: 18
   intervalShu: 0.1
@@ -502,14 +563,6 @@ MonoBehaviour:
   dropPrefab: {fileID: 0}
   col: {fileID: 0}
   leafParticlePrefab: {fileID: 3638270819646541462, guid: 9b013d0007fd7c143af36580ccfdbf72, type: 3}
-  quickInter: 0.1
-  pershot: 36
-  bulletsPerRing520: 36
-  ringInterval520: 0.8
-  FifBoomBulletInterval: 0.05
-  spedFif: 3
-  maxFifBoomBullet: 3000
-  LianToPlayerInter: 0.02
   offset: {x: 0, y: -4, z: 0}
 --- !u!1 &4633973688100772944
 GameObject:
@@ -542,6 +595,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3626826667898133236}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6629291442447504114
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8616063907441497095}
+  - component: {fileID: 8146197692246220341}
+  m_Layer: 0
+  m_Name: BossBulletPoolBig
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8616063907441497095
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6629291442447504114}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3626826667898133236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &8146197692246220341
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6629291442447504114}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d71ae24aaf399e7449a94f4be230ee6e, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 1
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6845660928428651231
 GameObject:
   m_ObjectHideFlags: 0
@@ -565,6 +671,37 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6845660928428651231}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3626826667898133236}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6936721425609187841
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5084285213517904996}
+  m_Layer: 0
+  m_Name: BossBulletPool2Big
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5084285213517904996
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6936721425609187841}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}

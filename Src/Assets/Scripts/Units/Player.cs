@@ -476,7 +476,7 @@ public class Player : Unit
         if (isInvincible)
         {
             if (bullet != null && bullet.side != SIDE.PLAYER)
-                bullet.gameObject.SetActive(false);
+                //bullet.gameObject.SetActive(false);
             return;
         }
         if (bullet == null) return;
@@ -489,7 +489,7 @@ public class Player : Unit
                 this.HP = 0;
                 this.Die();
             }
-            bullet.gameObject.SetActive(false);
+            //bullet.gameObject.SetActive(false);
             return;
         }
         
